@@ -94,7 +94,7 @@ dist
 # Serverless directories
 .serverless/
 
-# FuseBox cache
+# FuseBox cachecls
 .fusebox/
 
 # DynamoDB Local files
@@ -102,3 +102,5 @@ dist
 
 # TernJS port file
 .tern-port
+
+build/
