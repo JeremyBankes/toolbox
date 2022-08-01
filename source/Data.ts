@@ -94,4 +94,14 @@ export default class Data {
         }
     }
 
+    /**
+     * Used to optionally include {@link value}'s properties when defining an inline object. 
+     * @param condition The condition to be checked.
+     * @param value The object with properties to include in an inline object definition if {@link condition} is met.
+     * @returns The given {@link value} if {@link condition} is met, an empty array otherwise.
+     */
+    public static conditional(condition: boolean, value: object) {
+        return condition ? value : {};
+    }
+
 }
