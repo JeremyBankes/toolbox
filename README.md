@@ -2,9 +2,55 @@
 A utility library delivering many quality of life improvements to both browser and node environments.
 
 # API Documentation
+## Classes
+
+<dl>
+<dt><a href="#ElementMapping">ElementMapping</a></dt>
+<dd><p>Holds a mapping of IDs to their corresponding elements
+An easy-to-use typed, wrapping of documnet.getElementById()</p>
+</dd>
+</dl>
+
 ## Functions
 
 <dl>
+<dt><a href="#onReady">onReady(callback)</a></dt>
+<dd><p>Registers a callback to be run when the DOM content loads.</p>
+</dd>
+<dt><a href="#onError">onError(callback)</a></dt>
+<dd><p>Registers a callback to be run if an error occurs while executing onReady callbacks.</p>
+</dd>
+<dt><a href="#getMapping">getMapping(root)</a> ⇒</dt>
+<dd><p>Returns an ElementMapping of all elements in <a href="root">root</a>.</p>
+</dd>
+<dt><a href="#create">create(options)</a> ⇒</dt>
+<dd><p>Creates an HTML element</p>
+</dd>
+<dt><a href="#clear">clear(container)</a></dt>
+<dd><p>Removes all children from a node.</p>
+</dd>
+<dt><a href="#getFormData">getFormData(section)</a></dt>
+<dd><p>Retrieves form data for inputs within a certain section in a form</p>
+</dd>
+<dt><a href="#setFormData">setFormData(form, data)</a></dt>
+<dd><p>Populates a form&#39;s inputs with data.</p>
+</dd>
+<dt><a href="#clearFormSection">clearFormSection(section)</a></dt>
+<dd><p>Clears the value of the inputs within a certain section within a form.</p>
+</dd>
+<dt><a href="#setSlowedInputListener">setSlowedInputListener(input, callback, delay)</a></dt>
+<dd><p>Attaches a input listener that only fires a given amount of time after the user has stopped inputting.
+This is useful to reducing the amount of API requests for suggestions-as-you-type search boxes.</p>
+</dd>
+<dt><a href="#setFormSubmitListener">setFormSubmitListener(form, submissionCallback, errorCallback, finallyCallback)</a></dt>
+<dd><p>Creates a client-side form submission handler</p>
+</dd>
+<dt><a href="#existanceControlledBy">existanceControlledBy(templateElement, controlInput, valueEvaluationCallback)</a></dt>
+<dd><p>Controls the existance of &#39;templateElement&#39;s content in the DOM based on the value of &#39;controlInput&#39;</p>
+</dd>
+<dt><a href="#isBrowser">isBrowser()</a> ⇒</dt>
+<dd><p>Determines if the current runtime is a browser.</p>
+</dd>
 <dt><a href="#request">request(url, body, headers)</a> ⇒</dt>
 <dd><p>Sends a <a href="method">method</a> request with optional body data and headers.
 Uses the fetch API and <a href="Network.defaults">Network.defaults</a></p>
@@ -72,6 +118,144 @@ If the value at <a href="path">path</a> in <a href="target">target</a> does not 
 </dd>
 </dl>
 
+<a name="onReady"></a>
+
+## onReady(callback)
+Registers a callback to be run when the DOM content loads.
+
+**Kind**: global function  
+
+| Param | Description |
+| --- | --- |
+| callback | The callback to be run when the DOM content loads. |
+
+<a name="onError"></a>
+
+## onError(callback)
+Registers a callback to be run if an error occurs while executing onReady callbacks.
+
+**Kind**: global function  
+
+| Param | Description |
+| --- | --- |
+| callback | The callback to be run if an error occurs while executing onReady callbacks. |
+
+<a name="getMapping"></a>
+
+## getMapping(root) ⇒
+Returns an ElementMapping of all elements in [root](root).
+
+**Kind**: global function  
+**Returns**: A mapping of element in [root](root)  
+
+| Param | Description |
+| --- | --- |
+| root | The document to create the mapping for. |
+
+<a name="create"></a>
+
+## create(options) ⇒
+Creates an HTML element
+
+**Kind**: global function  
+**Returns**: The created HTML element  
+
+| Param | Description |
+| --- | --- |
+| options | The options used to create the element |
+
+<a name="clear"></a>
+
+## clear(container)
+Removes all children from a node.
+
+**Kind**: global function  
+
+| Param | Description |
+| --- | --- |
+| container | The node to remove the children from. |
+
+<a name="getFormData"></a>
+
+## getFormData(section)
+Retrieves form data for inputs within a certain section in a form
+
+**Kind**: global function  
+
+| Param | Description |
+| --- | --- |
+| section | The section to retrieve the form data from. This can be the form itself. |
+
+<a name="setFormData"></a>
+
+## setFormData(form, data)
+Populates a form's inputs with data.
+
+**Kind**: global function  
+
+| Param | Description |
+| --- | --- |
+| form | The form element to populate. |
+| data | The data to populate [form](form) with. |
+
+<a name="clearFormSection"></a>
+
+## clearFormSection(section)
+Clears the value of the inputs within a certain section within a form.
+
+**Kind**: global function  
+
+| Param | Description |
+| --- | --- |
+| section | The section to retrieve the form data from. |
+
+<a name="setSlowedInputListener"></a>
+
+## setSlowedInputListener(input, callback, delay)
+Attaches a input listener that only fires a given amount of time after the user has stopped inputting.This is useful to reducing the amount of API requests for suggestions-as-you-type search boxes.
+
+**Kind**: global function  
+
+| Param | Default | Description |
+| --- | --- | --- |
+| input |  | The element to attach the listener to |
+| callback |  | The callback to be run after inputting |
+| delay | <code>500</code> | The time in milliseconds to wait after the user has inputted until firing the callback |
+
+<a name="setFormSubmitListener"></a>
+
+## setFormSubmitListener(form, submissionCallback, errorCallback, finallyCallback)
+Creates a client-side form submission handler
+
+**Kind**: global function  
+
+| Param | Default | Description |
+| --- | --- | --- |
+| form |  | The form element to list for submissions on. |
+| submissionCallback |  | The callback to execute on the submission of [form](form). |
+| errorCallback | <code></code> | The callback to execute on an error during the execution of [submissionCallback](submissionCallback). |
+| finallyCallback | <code></code> | The callback to execute after the execution of [submissionCallback](submissionCallback) and [errorCallback](errorCallback). |
+
+<a name="existanceControlledBy"></a>
+
+## existanceControlledBy(templateElement, controlInput, valueEvaluationCallback)
+Controls the existance of 'templateElement's content in the DOM based on the value of 'controlInput'
+
+**Kind**: global function  
+
+| Param | Description |
+| --- | --- |
+| templateElement | The element whoes existance is dictated by 'controlInput' |
+| controlInput | The element whoes value controls the existance of 'templateElement' |
+| valueEvaluationCallback | The callback to assess 'controlInput's value. Returns true for templateElement to exists, false otherwise |
+
+<a name="isBrowser"></a>
+
+## isBrowser() ⇒
+Determines if the current runtime is a browser.
+
+**Kind**: global function  
+**Returns**: True if the current runtime is a browser, false otherwise.  
 <a name="request"></a>
 
 ## request(url, body, headers) ⇒
