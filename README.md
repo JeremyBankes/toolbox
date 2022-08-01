@@ -17,6 +17,12 @@ A utility library delivering many quality of life improvements to both browser a
 <dt><a href="#remove">remove(target, path)</a> ⇒</dt>
 <dd><p>Removes a value at <a href="path">path</a> in <a href="target">target</a>.</p>
 </dd>
+<dt><a href="#toSlug">toSlug(string)</a> ⇒</dt>
+<dd><p>Converts <a href="string">string</a> to a url-slug. Note that this function treats camel casing as seperate words. Convert <a href="string">string</a> to lower case first to avoid this functionality.</p>
+</dd>
+<dt><a href="#toCamel">toCamel(string)</a> ⇒</dt>
+<dd><p>Converts <a href="string">string</a> to camelCase.</p>
+</dd>
 </dl>
 
 <a name="has"></a>
@@ -71,4 +77,28 @@ Removes a value at [path](path) in [target](target).
 | --- | --- |
 | target | The target object. |
 | path | The path of the value to remove from [target](target). |
+
+<a name="toSlug"></a>
+
+## toSlug(string) ⇒
+Converts [string](string) to a url-slug. Note that this function treats camel casing as seperate words. Convert [string](string) to lower case first to avoid this functionality.
+
+**Kind**: global function  
+**Returns**: a-slug-string  
+
+| Param | Description |
+| --- | --- |
+| string | The text to turn into a slug |
+
+<a name="toCamel"></a>
+
+## toCamel(string) ⇒
+Converts [string](string) to camelCase.
+
+**Kind**: global function  
+**Returns**: aCamelCaseString  
+
+| Param | Description |
+| --- | --- |
+| string | The text to turn into camel case |
 

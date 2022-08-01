@@ -2,7 +2,7 @@ import jsdoc2md from 'jsdoc-to-markdown';
 import fs from 'fs';
 
 const documentation = jsdoc2md.renderSync({
-    files: 'build/*.js'
+    files: 'build/**/*.js'
 });
 
 let readMeContent = fs.readFileSync('documentation/README.template.md', 'utf8');
