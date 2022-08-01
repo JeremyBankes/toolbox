@@ -1,3 +1,6 @@
+/**
+ * A String manipulation moduled used for formatting and interpreting text. 
+ */
 export default class String {
 
     public static toSlug(string: string) {

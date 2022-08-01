@@ -1,6 +1,15 @@
+/**
+ * A data manipulation module primarily used for reading and altering objects.
+ */
 export default class Data {
 
-    public static has(source: object, path: string | (string | number | symbol)[]) {
+    /**
+     * Checks to see if a given {@link target} object has a given {@link path}.
+     * @param target The target object.
+     * @param path The path to check the existance of.
+     * @returns True if {@link target} has {@link path}.
+     */
+    public static has(target: object, path: string | (string | number | symbol)[]) {
         if (typeof path === 'string') {
             path = path.split('.');
         }
@@ -8,60 +17,80 @@ export default class Data {
             return true;
         } else {
             const key = path.shift();
-            if (typeof source === 'object' && source !== null && key in source) {
-                return Data.has(source[key], path);
+            if (typeof target === 'object' && target !== null && key in target) {
+                return Data.has(target[key], path);
             } else {
                 return false;
             }
         }
     }
 
-    public static get(source: object, path: string | (string | number | symbol)[], fallback: any = null) {
+    /**
+     * Finds a retrieves a value at a {@link path} in a {@link target} object.
+     * @param target The target object.
+     * @param path The path to retrieve a value from.
+     * @param fallback A value to fallback on if {@link path} couldn't be found.
+     * @returns The value in {@link target} at {@link path}, or {@link fallback} if {@link path} can't be found.
+     */
+    public static get(target: object, path: string | (string | number | symbol)[], fallback: any = null) {
         if (typeof path === 'string') {
             path = path.split('.');
         }
         if (path.length === 0) {
-            return source;
+            return target;
         } else {
             const key = path.shift();
-            if (typeof source === 'object' && source !== null && key in source) {
-                return Data.get(source[key], path, fallback);
+            if (typeof target === 'object' && target !== null && key in target) {
+                return Data.get(target[key], path, fallback);
             } else {
                 return fallback;
             }
         }
     }
 
-    public static set(source: object, path: string | (string | number | symbol)[], value: any) {
+    /**
+     * Sets a {@link value} in a {@link target} object at {@link path}.
+     * @param target The target object.
+     * @param path The path to set {@link value} at.
+     * @param value The value to be set.
+     */
+    public static set(target: object, path: string | (string | number | symbol)[], value: any) {
         if (typeof path === 'string') {
             path = path.split('.');
         }
         if (path.length > 0) {
             const key = path.shift();
             if (path.length === 0) {
-                source[key] = value;
+                target[key] = value;
             } else {
-                if (typeof source[key] !== 'object' && source[key] !== null) {
-                    source[key] = path.length > 0 && !isNaN(parseInt(path[0].toString())) ? [] : {};
+                if (typeof target[key] !== 'object' && target[key] !== null) {
+                    target[key] = path.length > 0 && !isNaN(parseInt(path[0].toString())) ? [] : {};
                 }
-                Data.set(source[key], path, value);
+                Data.set(target[key], path, value);
             }
         }
     }
 
-    public static remove(source: object, path: string | (string | number | symbol)[]) {
+    /**
+     * Removes a value at {@link path} in {@link target}.
+     * @param target The target object.
+     * @param path The path of the value to remove from {@link target}.
+     * @returns The removed value, or null if no value was removed.
+     */
+    public static remove(target: object, path: string | (string | number | symbol)[]) {
         if (typeof path === 'string') {
             path = path.split('.');
         }
         if (path.length === 0) {
-            return;
+            return null;
         }
         const key = path.shift();
         if (path.length === 0) {
-            delete source[key];
-            return;
-        } else if (key in source) {
-            Data.remove(source[key], path);
+            const deleted = target[key];
+            delete target[key];
+            return deleted;
+        } else if (key in target) {
+            Data.remove(target[key], path);
         }
     }
 

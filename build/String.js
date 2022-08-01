@@ -1,3 +1,6 @@
+/**
+ * A String manipulation moduled used for formatting and interpreting text.
+ */
 export default class String {
     static toSlug(string) {
         string = string.replace(/[^a-z0-9]+/gi, '-');
