@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "target": "ES2022",
+        "module": "ESNext",
+        "moduleResolution": "node",
+        "rootDir": "source",
+        "outDir": "build",
+        "allowJs": false,
+        "allowSyntheticDefaultImports": true,
+        "declaration": true
+    },
+    "typeAcquisition": {
+        "enable": false
+    }
+}
