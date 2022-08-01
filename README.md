@@ -41,6 +41,26 @@ Uses the fetch API and <a href="Network.defaults">Network.defaults</a></p>
 <dt><a href="#remove">remove(target, path)</a> ⇒</dt>
 <dd><p>Removes a value at <a href="path">path</a> in <a href="target">target</a>.</p>
 </dd>
+<dt><a href="#clone">clone(target, deep)</a> ⇒</dt>
+<dd><p>Creates a copy of <a href="target">target</a>.</p>
+</dd>
+<dt><a href="#walk">walk(target, callback, path, level)</a></dt>
+<dd><p>Walks across the nested properties of <a href="target">target</a> and calls <a href="callback">callback</a> for every property.</p>
+</dd>
+<dt><a href="#flatten">flatten(target)</a> ⇒</dt>
+<dd><p>Flattens an object&#39;s nested hierarchy.
+I.E. { name: { first: &#39;Jeremy&#39;, last: &#39;Bankes&#39; } } -&gt; { &#39;name.first&#39;: &#39;Jeremy&#39;, &#39;name.last&#39;: &#39;Bankes&#39; }</p>
+</dd>
+<dt><a href="#hierarchize">hierarchize(target)</a> ⇒</dt>
+<dd><p>Converts a flattened object back into an object with a nested hierarchy.</p>
+</dd>
+<dt><a href="#ensure">ensure(target, path, fallback)</a> ⇒</dt>
+<dd><p>Ensures that <a href="target">target</a> has a value at <a href="path">path</a> with the same type of <a href="fallback">fallback</a>.
+If the value at <a href="path">path</a> in <a href="target">target</a> does not exist, or has a differing type than <a href="fallback">fallback</a>, <a href="fallback">fallback</a> will take it&#39;s place.</p>
+</dd>
+<dt><a href="#filter">filter(target, predicate)</a> ⇒</dt>
+<dd><p>Filters nested properties from <a href="target">target</a> based on <a href="predicate">predicate</a>.</p>
+</dd>
 <dt><a href="#conditional">conditional(condition, value)</a> ⇒</dt>
 <dd><p>Used to optionally include <a href="value">value</a>&#39;s properties when defining an inline object.</p>
 </dd>
@@ -188,6 +208,84 @@ Removes a value at [path](path) in [target](target).
 | --- | --- |
 | target | The target object. |
 | path | The path of the value to remove from [target](target). |
+
+<a name="clone"></a>
+
+## clone(target, deep) ⇒
+Creates a copy of [target](target).
+
+**Kind**: global function  
+**Returns**: A copy of [target](target).  
+
+| Param | Default | Description |
+| --- | --- | --- |
+| target |  | The target object to clone. |
+| deep | <code>false</code> | True to perform a deep copy, false to perform a shallow copy. |
+
+<a name="walk"></a>
+
+## walk(target, callback, path, level)
+Walks across the nested properties of [target](target) and calls [callback](callback) for every property.
+
+**Kind**: global function  
+
+| Param | Default | Description |
+| --- | --- | --- |
+| target |  | The target object. |
+| callback |  | The callback to be executed for every nested property in [target](target). |
+| path |  | The path to start walking in [target](target). |
+| level | <code>0</code> | The level of nesting from the starting path in [target](target). |
+
+<a name="flatten"></a>
+
+## flatten(target) ⇒
+Flattens an object's nested hierarchy.I.E. { name: { first: 'Jeremy', last: 'Bankes' } } -> { 'name.first': 'Jeremy', 'name.last': 'Bankes' }
+
+**Kind**: global function  
+**Returns**: A flattend version of [target](target) without any nesting.  
+
+| Param | Description |
+| --- | --- |
+| target | The target object |
+
+<a name="hierarchize"></a>
+
+## hierarchize(target) ⇒
+Converts a flattened object back into an object with a nested hierarchy.
+
+**Kind**: global function  
+**Returns**: a hierarchized version of [target](target) with a nested hierarchy.  
+
+| Param |
+| --- |
+| target | 
+
+<a name="ensure"></a>
+
+## ensure(target, path, fallback) ⇒
+Ensures that [target](target) has a value at [path](path) with the same type of [fallback](fallback).If the value at [path](path) in [target](target) does not exist, or has a differing type than [fallback](fallback), [fallback](fallback) will take it's place.
+
+**Kind**: global function  
+**Returns**: The value at [path](path) in [target](target).  
+
+| Param | Description |
+| --- | --- |
+| target | The target object. |
+| path | The path to ensure has a valid value of the same type as [fallback](fallback). |
+| fallback | The value to fallback to at [path](path) in [target](target) to if it doesn't already exist. |
+
+<a name="filter"></a>
+
+## filter(target, predicate) ⇒
+Filters nested properties from [target](target) based on [predicate](predicate).
+
+**Kind**: global function  
+**Returns**: A copy of [target](target) with its properties filtered based on [predicate](predicate).  
+
+| Param | Description |
+| --- | --- |
+| target | The target object to filter. |
+| predicate | The predicate to determine which properties to filter. Return true to keep property, false to filter it. |
 
 <a name="conditional"></a>
 

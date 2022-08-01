@@ -7,9 +7,14 @@
         "outDir": "build",
         "allowJs": false,
         "allowSyntheticDefaultImports": true,
-        "declaration": true,
-        "declarationDir": "types"
+        "declaration": true
     },
+    "include": [
+        "source/**/*.ts"
+    ],
+    "exclude": [
+        "node_modules"
+    ],
     "typeAcquisition": {
         "enable": false
     }

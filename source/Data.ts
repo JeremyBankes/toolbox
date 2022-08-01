@@ -1,3 +1,6 @@
+type WalkObjectCallback = (target: object, property: any, path: string, level: number) => void;
+type ObjectFilterPredicate = (target: object, property: any, path: string, level: number) => boolean;
+
 /**
  * A data manipulation module primarily used for reading and altering objects.
  */
@@ -92,6 +95,105 @@ export default class Data {
         } else if (key in target) {
             Data.remove(target[key], path);
         }
+    }
+
+    /**
+     * Creates a copy of {@link target}.
+     * @param target The target object to clone.
+     * @param deep True to perform a deep copy, false to perform a shallow copy.
+     * @returns A copy of {@link target}.
+     */
+    public static clone(target: object, deep: boolean = false) {
+        if (deep) {
+            const objectClone = {};
+            if (target.constructor.name !== 'Object') {
+                throw new Error('Cannot clone class. Please only clone POJOs.');
+            } else {
+                Data.walk(target, (target, property, path) => {
+                    if (typeof property !== 'object') {
+                        Data.set(objectClone, path, property);
+                    }
+                });
+            }
+            return objectClone;
+        } else {
+            return { ...target };
+        }
+    }
+
+    /**
+     * Walks across the nested properties of {@link target} and calls {@link callback} for every property.
+     * @param target The target object.
+     * @param callback The callback to be executed for every nested property in {@link target}.
+     * @param path The path to start walking in {@link target}.
+     * @param level The level of nesting from the starting path in {@link target}.
+     */
+    public static walk(target: object, callback: WalkObjectCallback, path: string = '', level: number = 0) {
+        for (const key in target) {
+            const value = target[key];
+            const valuePath = path === '' ? key : path + '.' + key;
+            callback(target, value, valuePath, level);
+            if (typeof value === 'object' && value !== null) {
+                Data.walk(value, callback, valuePath, level + 1);
+            }
+        }
+    }
+
+    /**
+     * Flattens an object's nested hierarchy.
+     * I.E. { name: { first: 'Jeremy', last: 'Bankes' } } -> { 'name.first': 'Jeremy', 'name.last': 'Bankes' }
+     * 
+     * @param target The target object
+     * @returns A flattend version of {@link target} without any nesting.
+     */
+    public static flatten(target: object) {
+        const flattenedTarget = {};
+        Data.walk(target, (_, property, path) => flattenedTarget[path] = property);
+        return flattenedTarget;
+    }
+
+    /**
+     * Converts a flattened object back into an object with a nested hierarchy.
+     * @param target
+     * @returns a hierarchized version of {@link target} with a nested hierarchy.
+     */
+    public static hierarchize(target: object) {
+        const object = {};
+        for (const key in target) {
+            Data.set(object, key, target[key]);
+        }
+        return object;
+    }
+
+    /**
+     * Ensures that {@link target} has a value at {@link path} with the same type of {@link fallback}.
+     * If the value at {@link path} in {@link target} does not exist, or has a differing type than {@link fallback}, {@link fallback} will take it's place.
+     * @param target The target object.
+     * @param path The path to ensure has a valid value of the same type as {@link fallback}.
+     * @param fallback The value to fallback to at {@link path} in {@link target} to if it doesn't already exist.
+     * @returns The value at {@link path} in {@link target}.
+     */
+    public static ensure(target: object, path: string, fallback: any) {
+        if (!Data.has(target, path) || typeof Data.get(target, path) !== typeof fallback) {
+            Data.set(target, path, fallback);
+        }
+        return Data.get(target, path);
+    }
+
+    /**
+     * Filters nested properties from {@link target} based on {@link predicate}.
+     * @param target The target object to filter.
+     * @param predicate The predicate to determine which properties to filter. Return true to keep property, false to filter it.
+     * @returns A copy of {@link target} with its properties filtered based on {@link predicate}.
+     */
+    public static filter(target: object, predicate: ObjectFilterPredicate) {
+        const filteredObject = Data.clone(target, true);
+        Data.walk(target, (target, property, path, level) => {
+            if (!predicate(target, property, path, level)) {
+                Data.remove(filteredObject, path);
+            }
+        });
+        return filteredObject;
     }
 
     /**

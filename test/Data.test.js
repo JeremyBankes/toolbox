@@ -90,3 +90,35 @@ test('Data.remove simple', () => {
 test('Data.remove path does not exist', () => {
     Data.remove(author, 'random.path.that.does.not.exist');
 });
+
+test('Data.walk', () => {
+    let birthDate = null;
+    Data.walk(author, (author, value, path) => {
+        if (value instanceof Date) {
+            birthDate = value;
+        }
+    });
+    expect(birthDate).toBe(author.birthDate);
+});
+
+test('Data.flatten', () => {
+    const authorCopy = {};
+    Data.walk(author, (_, value, path) => {
+        Data.set(authorCopy, path, value);
+        if (value === 'Maximus Meridius') {
+            expect(path).toBe('favorites.movies.0.main');
+        }
+    });
+    expect(authorCopy).toMatchObject(author);
+});
+
+test('Data.flatten', () => {
+    expect(Data.hierarchize(Data.flatten(author))).toMatchObject(author);
+});
+
+test('Data.filter', () => {
+    const filteredAuthor = Data.filter(author, (target, property, path) => path !== 'favorites');
+    const authorWithoutFavorites = Data.clone(author, true);
+    Data.remove(authorWithoutFavorites, 'favorites');
+    expect(filteredAuthor).toMatchObject(authorWithoutFavorites);
+});

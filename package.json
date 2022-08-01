@@ -3,10 +3,10 @@
     "version": "1.0.0",
     "description": "A utility library delivering many quality of life improvements to both browser and node environments.",
     "main": "build/index.js",
-    "types": "types/index.d.ts",
+    "types": "build/index.d.ts",
     "type": "module",
     "scripts": {
-        "build": "npx tsc && npm run document",
+        "build": "npx tsc --build --verbose && npm run document",
         "test": "npm run build && node --experimental-vm-modules node_modules/jest/bin/jest.js",
         "develop": "npx nodemon --watch source --exec \"npm run test\"",
         "document": "node documentation/generate.js"
