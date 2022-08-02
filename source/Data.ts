@@ -202,8 +202,16 @@ export default class Data {
      * @param value The object with properties to include in an inline object definition if {@link condition} is met.
      * @returns The given {@link value} if {@link condition} is met, an empty array otherwise.
      */
-    public static conditional(condition: boolean, value: object) {
-        return condition ? value : {};
+    public static conditional<Type extends any[] | object>(condition: boolean, value: Type): Type {
+        if (condition) {
+            return value;
+        } else {
+            if (Array.isArray(value)) {
+                return [] as Type;
+            } else {
+                return {} as Type;
+            }
+        }
     }
 
 }

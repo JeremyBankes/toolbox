@@ -116,6 +116,21 @@ If the value at <a href="path">path</a> in <a href="target">target</a> does not 
 <dt><a href="#toCamel">toCamel(string)</a> ⇒</dt>
 <dd><p>Converts <a href="string">string</a> to camelCase.</p>
 </dd>
+<dt><a href="#pluralize">pluralize(singular, count)</a> ⇒</dt>
+<dd><p>Makes <a href="singular">singular</a> plural.</p>
+</dd>
+<dt><a href="#fromDate">fromDate(date, format)</a> ⇒</dt>
+<dd><p>Converts a date object into strings of various formats.</p>
+</dd>
+<dt><a href="#toDate">toDate(dateString, formFormat)</a> ⇒</dt>
+<dd><p>Converts a string into a date object.</p>
+</dd>
+<dt><a href="#toTime">toTime(hoursOfDayOrDate, format)</a> ⇒</dt>
+<dd><p>Converts a date or hours number into time strings of various formats.</p>
+</dd>
+<dt><a href="#fromTime">fromTime(formTimeString)</a> ⇒</dt>
+<dd><p>Converts a form time string to a number of hours of a day.</p>
+</dd>
 </dl>
 
 <a name="onReady"></a>
@@ -507,4 +522,68 @@ Converts [string](string) to camelCase.
 | Param | Description |
 | --- | --- |
 | string | The text to turn into camel case |
+
+<a name="pluralize"></a>
+
+## pluralize(singular, count) ⇒
+Makes [singular](singular) plural.
+
+**Kind**: global function  
+**Returns**: The plural of [singular](singular).  
+
+| Param | Default | Description |
+| --- | --- | --- |
+| singular |  | The singular word to make plural. |
+| count | <code>0</code> | The number of [singular](singular). Not 1 to pluralize. |
+
+<a name="fromDate"></a>
+
+## fromDate(date, format) ⇒
+Converts a date object into strings of various formats.
+
+**Kind**: global function  
+**Returns**: A formatted date string.  
+
+| Param | Default | Description |
+| --- | --- | --- |
+| date |  | The date to convert. |
+| format | <code>pretty</code> | The format to use. |
+
+<a name="toDate"></a>
+
+## toDate(dateString, formFormat) ⇒
+Converts a string into a date object.
+
+**Kind**: global function  
+**Returns**: The parsed date.  
+
+| Param | Description |
+| --- | --- |
+| dateString | The string to parse into a date. |
+| formFormat | If true, parses 'dateString' in the current timezone instead of UTC. |
+
+<a name="toTime"></a>
+
+## toTime(hoursOfDayOrDate, format) ⇒
+Converts a date or hours number into time strings of various formats.
+
+**Kind**: global function  
+**Returns**: The formatted time string.  
+
+| Param | Default | Description |
+| --- | --- | --- |
+| hoursOfDayOrDate |  | A number of hours in a day (0-24) or a date object to convert to a time string. |
+| format | <code>pretty</code> | The format of the time string. |
+
+<a name="fromTime"></a>
+
+## fromTime(formTimeString) ⇒
+Converts a form time string to a number of hours of a day.
+
+**Kind**: global function  
+**Returns**: An hour of the day (0-24) representing [formTimeString](formTimeString).  
+
+| Param | Description |
+| --- | --- |
+| formTimeString | The string to parse. |
 

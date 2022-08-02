@@ -9,3 +9,7 @@ test('toSlug', () => {
 test('toCamel', () => {
     expect(String.toCamel(UGLY_STRING)).toBe('thisIs1VeryUglyString')
 });
+
+test('toDurationString', () => {
+    expect(String.toDurationString(395038572, 'day', 'hour')).toBe('4 days, 14 hours');
+});
