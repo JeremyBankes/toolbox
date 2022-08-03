@@ -79,7 +79,10 @@ Uses the fetch API and <a href="Network.defaults">Network.defaults</a></p>
 <dd><p>Checks to see if a given <a href="target">target</a> object has a given <a href="path">path</a>.</p>
 </dd>
 <dt><a href="#get">get(target, path, fallback)</a> ⇒</dt>
-<dd><p>Finds a retrieves a value at a <a href="path">path</a> in a <a href="target">target</a> object.</p>
+<dd><p>Finds a retrieves a value at <a href="path">path</a> in <a href="target">target</a> object.</p>
+</dd>
+<dt><a href="#getOrThrow">getOrThrow(target, path, validator)</a> ⇒</dt>
+<dd><p>Finds a retrieves a value at <a href="path">path</a> in <a href="target">target</a> or throws and error if the value fails validation by <a href="validator">validator</a>.</p>
 </dd>
 <dt><a href="#set">set(target, path, value)</a></dt>
 <dd><p>Sets a <a href="value">value</a> in a <a href="target">target</a> object at <a href="path">path</a>.</p>
@@ -130,6 +133,15 @@ If the value at <a href="path">path</a> in <a href="target">target</a> does not 
 </dd>
 <dt><a href="#fromTime">fromTime(formTimeString)</a> ⇒</dt>
 <dd><p>Converts a form time string to a number of hours of a day.</p>
+</dd>
+<dt><a href="#toDurationString">toDurationString(milliseconds, maximumPrecision, minimumPrecision)</a> ⇒</dt>
+<dd><p>Converts a given duration in milliseconds to a string.</p>
+</dd>
+<dt><a href="#getLevenshteinDistance">getLevenshteinDistance(stringA, stringB)</a> ⇒</dt>
+<dd><p>Calculates the <a href="https://en.wikipedia.org/wiki/Levenshtein_distance">Levenshtein distance</a> between two strings.</p>
+</dd>
+<dt><a href="#getSimilarityFactor">getSimilarityFactor(stringA, stringB)</a> ⇒</dt>
+<dd><p>Calculates a normalized similarity factor between two strings. Determines how similar two strings are. Used for fuzzy string checking.</p>
 </dd>
 </dl>
 
@@ -371,7 +383,7 @@ Checks to see if a given [target](target) object has a given [path](path).
 <a name="get"></a>
 
 ## get(target, path, fallback) ⇒
-Finds a retrieves a value at a [path](path) in a [target](target) object.
+Finds a retrieves a value at [path](path) in [target](target) object.
 
 **Kind**: global function  
 **Returns**: The value in [target](target) at [path](path), or [fallback](fallback) if [path](path) can't be found.  
@@ -381,6 +393,20 @@ Finds a retrieves a value at a [path](path) in a [target](target) object.
 | target |  | The target object. |
 | path |  | The path to retrieve a value from. |
 | fallback | <code></code> | A value to fallback on if [path](path) couldn't be found. |
+
+<a name="getOrThrow"></a>
+
+## getOrThrow(target, path, validator) ⇒
+Finds a retrieves a value at [path](path) in [target](target) or throws and error if the value fails validation by [validator](validator).
+
+**Kind**: global function  
+**Returns**: The value found at [path](path) in [target](target).  
+
+| Param | Description |
+| --- | --- |
+| target | The target object. |
+| path | The path to retrieve a value from. |
+| validator | A predicate to validate the value found at [path](path). |
 
 <a name="set"></a>
 
@@ -586,4 +612,44 @@ Converts a form time string to a number of hours of a day.
 | Param | Description |
 | --- | --- |
 | formTimeString | The string to parse. |
+
+<a name="toDurationString"></a>
+
+## toDurationString(milliseconds, maximumPrecision, minimumPrecision) ⇒
+Converts a given duration in milliseconds to a string.
+
+**Kind**: global function  
+**Returns**: A duration string.  
+
+| Param | Default | Description |
+| --- | --- | --- |
+| milliseconds |  | Milliseconds to convert into a duration string. |
+| maximumPrecision | <code>day</code> | The maximum precision of the duration string. |
+| minimumPrecision | <code>second</code> | The minimum precision of the duration string. |
+
+<a name="getLevenshteinDistance"></a>
+
+## getLevenshteinDistance(stringA, stringB) ⇒
+Calculates the [Levenshtein distance](https://en.wikipedia.org/wiki/Levenshtein_distance) between two strings.
+
+**Kind**: global function  
+**Returns**: The distance between [stringA](stringA) and [stringB](stringB)  
+
+| Param | Description |
+| --- | --- |
+| stringA | The first string |
+| stringB | The second string |
+
+<a name="getSimilarityFactor"></a>
+
+## getSimilarityFactor(stringA, stringB) ⇒
+Calculates a normalized similarity factor between two strings. Determines how similar two strings are. Used for fuzzy string checking.
+
+**Kind**: global function  
+**Returns**: A similarity factor, 1 being identical, 0 being very different.  
+
+| Param | Description |
+| --- | --- |
+| stringA | The first string |
+| stringB | The second string |
 

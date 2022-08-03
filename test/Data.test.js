@@ -63,6 +63,11 @@ test('Data.get fallback', () => {
     expect(Data.get(author, '', 'quack')).toBe('quack');
 });
 
+test('Data.getOrThrow', () => {
+    expect(Data.getOrThrow(author, 'name.first')).toBe('Jeremy');
+    expect(() => Data.getOrThrow(author, 'name.middle')).toThrow();
+});
+
 test('Data.set simple', () => {
     const object = {};
     Data.set(object, 'name.first', 'Jeremy');

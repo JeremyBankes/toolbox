@@ -1,5 +1,6 @@
 type WalkObjectCallback = (target: object, property: any, path: string, level: number) => void;
 type ObjectFilterPredicate = (target: object, property: any, path: string, level: number) => boolean;
+type ValueValidationPredicate = (value: any) => boolean;
 
 /**
  * A data manipulation module primarily used for reading and altering objects.
@@ -29,7 +30,7 @@ export default class Data {
     }
 
     /**
-     * Finds a retrieves a value at a {@link path} in a {@link target} object.
+     * Finds a retrieves a value at {@link path} in {@link target} object.
      * @param target The target object.
      * @param path The path to retrieve a value from.
      * @param fallback A value to fallback on if {@link path} couldn't be found.
@@ -49,6 +50,21 @@ export default class Data {
                 return fallback;
             }
         }
+    }
+
+    /**
+     * Finds a retrieves a value at {@link path} in {@link target} or throws and error if the value fails validation by {@link validator}.
+     * @param target The target object.
+     * @param path The path to retrieve a value from.
+     * @param validator A predicate to validate the value found at {@link path}.
+     * @returns The value found at {@link path} in {@link target}.
+     */
+    public static getOrThrow(target: object, path: string | (string | number | symbol)[], validator: ValueValidationPredicate = (value: any) => value !== null && value !== undefined) {
+        const value = Data.get(target, path);
+        if (!validator(value)) {
+            throw new Error(`Failed to find valid ${path} value in ${JSON.stringify(target)}. "${value}" value failed validation predicate.`);
+        }
+        return value;
     }
 
     /**
