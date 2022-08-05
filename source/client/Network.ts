@@ -1,4 +1,4 @@
-import Data from '../Data';
+import Data from '../Data.js';
 
 enum RequestMethod {
     GET = 'GET', HEAD = 'HEAD', OPTIONS = 'OPTIONS', PATCH = 'PATCH',

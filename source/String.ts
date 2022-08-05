@@ -1,5 +1,3 @@
-import Data from './Data';
-
 type StringDefaults = {
     locale: Intl.LocalesArgument,
     dateFormat: Intl.DateTimeFormatOptions,

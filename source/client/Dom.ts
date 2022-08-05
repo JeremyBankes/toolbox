@@ -1,4 +1,4 @@
-import Data from '../Data';
+import Data from '../Data.js';
 
 type OnDomReadyCallback = (mapping: ElementMapping) => void | Promise<void>;
 type OnDomErrorCallback = (error: Error, mapping: ElementMapping) => void;
