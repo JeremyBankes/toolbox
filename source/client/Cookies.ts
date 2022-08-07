@@ -58,7 +58,7 @@ export default class Cookies {
      * @param name The name of the cookie to set the value of.
      * @param value The value of the cookie to be set.
      */
-    setJson(name: string, value: any) {
+    public static setJson(name: string, value: any) {
         Cookies.setValue(name, JSON.stringify(value));
     }
 
