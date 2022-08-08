@@ -1,3 +1,12 @@
+export type CookieOptions = {
+    path?: string,
+    domain?: string,
+    maxAge?: number,
+    expires?: Date,
+    secure?: boolean,
+    sameSite?: 'lax' | 'strict' | 'none'
+};
+
 export default class Cookies {
 
     /**
@@ -5,7 +14,7 @@ export default class Cookies {
      * @param name The name of the cookie to get the value of.
      * @returns The cookie named {@link name}, or null if it does not exist.
      */
-    public static getValue(name: string) {
+    public static get(name: string) {
         const valueStrings = document.cookie.split(';');
         for (const valueString of valueStrings) {
             const [possibleKey, value] = valueString.trim().split('=').map(decodeURIComponent);
@@ -23,7 +32,7 @@ export default class Cookies {
      */
     public static getJson(name: string) {
         try {
-            return JSON.parse(Cookies.getValue(name));
+            return JSON.parse(Cookies.get(name));
         } catch (error) {
             return null;
         }
@@ -34,23 +43,27 @@ export default class Cookies {
      * @param name The name of the cookie to set the value of.
      * @param value The value of the cookie to be set.
      */
-    public static setValue(name: string, value: string) {
-        const valueStrings = document.cookie.split(';');
-        const cookieValueStrings = [];
-        const newValueString = `${name}=${encodeURIComponent(value)}`;
-        let overwritten = false;
-        for (let valueString of valueStrings) {
-            const [possibleKey] = valueString.trim().split('=').map(decodeURIComponent);
-            if (name === possibleKey) {
-                valueString = newValueString;
-                overwritten = true;
-            }
-            cookieValueStrings.push(valueString);
+    public static set(name: string, value: string, options: CookieOptions = {}) {
+        const pieces = [`${name}=${encodeURIComponent(value)}`];
+        if ('path' in options) {
+            pieces.push(`path=${options.path}`);
         }
-        if (!overwritten) {
-            cookieValueStrings.push(newValueString);
+        if ('domain' in options) {
+            pieces.push(`domain=${options.domain}`);
         }
-        document.cookie = cookieValueStrings.join(';');
+        if ('maxAge' in options) {
+            pieces.push(`max-age=${options.maxAge}`);
+        }
+        if ('expires' in options) {
+            pieces.push(`expires=${options.expires.toUTCString()}`)
+        }
+        if ('secure' in options && options.secure) {
+            pieces.push('secure');
+        }
+        if ('sameSite' in options) {
+            pieces.push(`samesite=${options.sameSite}`);
+        }
+        document.cookie = pieces.join('; ');
     }
 
     /**
@@ -58,8 +71,30 @@ export default class Cookies {
      * @param name The name of the cookie to set the value of.
      * @param value The value of the cookie to be set.
      */
-    public static setJson(name: string, value: any) {
-        Cookies.setValue(name, JSON.stringify(value));
+    public static setJson(name: string, value: any, options: CookieOptions = undefined) {
+        Cookies.set(name, JSON.stringify(value), options);
+    }
+
+    /**
+     * Deletes a cookie named {@link name}.
+     * @param name The name of the cookie to delete.
+     */
+    public static delete(name: string, options: CookieOptions = {}) {
+        const pieces = [`${name}=`];
+        if ('path' in options) {
+            pieces.push(`path=${options.path}`);
+        }
+        if ('domain' in options) {
+            pieces.push(`domain=${options.domain}`);
+        }
+        if ('secure' in options && options.secure) {
+            pieces.push('secure');
+        }
+        if ('sameSite' in options) {
+            pieces.push(`samesite=${options.sameSite}`);
+        }
+        pieces.push(`max-age=0`);
+        document.cookie = pieces.join('; ');
     }
 
 }

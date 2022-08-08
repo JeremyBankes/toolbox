@@ -14,17 +14,20 @@ An easy-to-use typed, wrapping of documnet.getElementById()</p>
 ## Functions
 
 <dl>
-<dt><a href="#getValue">getValue(name)</a> ⇒</dt>
+<dt><a href="#get">get(name)</a> ⇒</dt>
 <dd><p>Retrieves a cookie by name.</p>
 </dd>
 <dt><a href="#getJson">getJson(name)</a> ⇒</dt>
 <dd><p>Retrieves a JSON cookie by name.</p>
 </dd>
-<dt><a href="#setValue">setValue(name, value)</a></dt>
+<dt><a href="#set">set(name, value)</a></dt>
 <dd><p>Sets a cookie named <a href="name">name</a> to <a href="value">value</a>.</p>
 </dd>
 <dt><a href="#setJson">setJson(name, value)</a></dt>
 <dd><p>Sets a cookie named <a href="name">name</a> to <a href="value">value</a> as JSON.</p>
+</dd>
+<dt><a href="#delete">delete(name)</a></dt>
+<dd><p>Deletes a cookie named <a href="name">name</a>.</p>
 </dd>
 <dt><a href="#onReady">onReady(callback)</a></dt>
 <dd><p>Registers a callback to be run when the DOM content loads.</p>
@@ -157,9 +160,9 @@ If the value at <a href="path">path</a> in <a href="target">target</a> does not 
 </dd>
 </dl>
 
-<a name="getValue"></a>
+<a name="get"></a>
 
-## getValue(name) ⇒
+## get(name) ⇒
 Retrieves a cookie by name.
 
 **Kind**: global function  
@@ -181,9 +184,9 @@ Retrieves a JSON cookie by name.
 | --- | --- |
 | name | The name of the cookie to get the value of. |
 
-<a name="setValue"></a>
+<a name="set"></a>
 
-## setValue(name, value)
+## set(name, value)
 Sets a cookie named [name](name) to [value](value).
 
 **Kind**: global function  
@@ -204,6 +207,17 @@ Sets a cookie named [name](name) to [value](value) as JSON.
 | --- | --- |
 | name | The name of the cookie to set the value of. |
 | value | The value of the cookie to be set. |
+
+<a name="delete"></a>
+
+## delete(name)
+Deletes a cookie named [name](name).
+
+**Kind**: global function  
+
+| Param | Description |
+| --- | --- |
+| name | The name of the cookie to delete. |
 
 <a name="onReady"></a>
 
