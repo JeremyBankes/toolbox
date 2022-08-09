@@ -164,7 +164,11 @@ export default class Data {
      */
     public static flatten(target: object) {
         const flattenedTarget = {};
-        Data.walk(target, (_, property, path) => flattenedTarget[path] = property);
+        Data.walk(target, (_, property, path) => {
+            if (typeof property !== 'object') {
+                flattenedTarget[path] = property;
+            }
+        });
         return flattenedTarget;
     }
 
