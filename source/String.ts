@@ -106,7 +106,7 @@ export default class String {
     * @param formFormat If true, parses 'dateString' in the current timezone instead of UTC.
     * @returns The parsed date.
     */
-    public static toDate(dateString: string, formFormat: string) {
+    public static toDate(dateString: string, formFormat: boolean) {
         if (formFormat) {
             return new Date(new Date(dateString).getTime() + new Date().getTimezoneOffset() * 60000);
         } else {
