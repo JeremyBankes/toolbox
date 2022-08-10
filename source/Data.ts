@@ -18,7 +18,7 @@ export default class Data {
             path = path.split('.');
         }
         if (path.length === 0) {
-            return true;
+            return target !== undefined && target !== null;
         } else {
             const key = path.shift();
             if (typeof target === 'object' && target !== null && key in target) {
