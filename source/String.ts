@@ -27,7 +27,7 @@ export default class String {
      */
     public static toSlug(string: string) {
         string = string.replace(/[^a-z0-9]+/gi, '-');
-        string = string.replace(/(?!^)(?<!-)(?=[A-Z])/g, '-');
+        string = string.replace(/([^A-Z])([A-Z])/g, '$1-$2');
         string = string.replace(/^-|-$/g, '');
         return string.toLowerCase();
     }

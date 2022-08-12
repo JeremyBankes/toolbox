@@ -165,7 +165,7 @@ export default class Data {
     public static flatten(target: object) {
         const flattenedTarget = {};
         Data.walk(target, (_, property, path) => {
-            if (typeof property !== 'object') {
+            if (typeof property !== 'object' || property instanceof Date) {
                 flattenedTarget[path] = property;
             }
         });
