@@ -55,12 +55,12 @@ export default class String {
      * @param values A list of values to make a pretty list out of.
      * @returns A list deliminated by commas with the word 'and' seperating the last element.
      */
-    public static toPrettyList(values: string[]) {
+    public static toPrettyList(values: string[], lastDelimiter: ' and ', delimiter: ', ') {
         if (values.length > 1) {
             const lastValue = values.pop();
-            return values.join(',') + ' and ' + lastValue;
+            return values.join(delimiter) + lastDelimiter + lastValue;
         } else {
-            return values.join(', ');
+            return values.join(delimiter);
         }
     }
 
