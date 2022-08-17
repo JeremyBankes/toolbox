@@ -1,6 +1,6 @@
 {
     "name": "@jeremy-bankes/toolbox",
-    "version": "1.5.0",
+    "version": "1.5.1",
     "description": "A utility library delivering many quality of life improvements to both browser and node environments.",
     "main": "build/index.js",
     "types": "build/index.d.ts",

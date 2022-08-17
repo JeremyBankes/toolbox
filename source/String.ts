@@ -15,7 +15,7 @@ export default class String {
     /** 
      * The default options for text manipulations and formatting
      */
-    static defaults: StringDefaults = {
+    public static defaults: StringDefaults = {
         locale: 'en-CA',
         dateFormat: { dateStyle: 'long' },
         timeFormat: { timeStyle: 'short' },
@@ -189,7 +189,7 @@ export default class String {
      * @param date The date to get the weekday from.
      * @returns The name of the day of the week.
      */
-    getWeekdayName(date: Date) {
+    public static getWeekdayName(date: Date) {
         return date.toLocaleDateString(String.defaults.locale, { weekday: 'long' });
     }
 
@@ -198,7 +198,7 @@ export default class String {
      * @param date The date to get the month from.
      * @returns The name of the month of the year.
      */
-    getMonthName(date: Date) {
+    public static getMonthName(date: Date) {
         return date.toLocaleDateString(String.defaults.locale, { month: 'long' });
     }
 
@@ -207,7 +207,7 @@ export default class String {
      * @param currency The currency to convert to a string.
      * @returns A string representing {@link currency}.
      */
-    fromCurrency(currency: number) {
+    public static fromCurrency(currency: number) {
         return currency.toLocaleString(String.defaults.locale, { style: 'currency', currency: String.defaults.currency });
     }
 
@@ -216,7 +216,7 @@ export default class String {
      * @param percentage The percentage to convert to a string.
      * @returns A string representing {@link percentage}.
      */
-    fromPercentage(percentage: number) {
+    public static fromPercentage(percentage: number) {
         return percentage.toLocaleString(String.defaults.locale, { style: 'percent' });
     }
 
@@ -226,7 +226,7 @@ export default class String {
      * @param fractionalDigits The number of digits to represent the fractional portion of the number.
      * @returns A string representing {@link number}.
      */
-    fromNumber(number: number, fractionalDigits: number = 2) {
+    public static fromNumber(number: number, fractionalDigits: number = 2) {
         return number.toLocaleString(String.defaults.locale, { style: 'decimal', minimumFractionDigits: fractionalDigits, maximumFractionDigits: fractionalDigits });
     }
 

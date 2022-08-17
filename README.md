@@ -143,14 +143,29 @@ If the value at <a href="path">path</a> in <a href="target">target</a> does not 
 <dt><a href="#toDate">toDate(dateString, formFormat)</a> ⇒</dt>
 <dd><p>Converts a string into a date object.</p>
 </dd>
-<dt><a href="#toTime">toTime(hoursOfDayOrDate, format)</a> ⇒</dt>
+<dt><a href="#fromTime">fromTime(hoursOfDayOrDate, format)</a> ⇒</dt>
 <dd><p>Converts a date or hours number into time strings of various formats.</p>
 </dd>
-<dt><a href="#fromTime">fromTime(formTimeString)</a> ⇒</dt>
+<dt><a href="#toTime">toTime(formTimeString)</a> ⇒</dt>
 <dd><p>Converts a form time string to a number of hours of a day.</p>
 </dd>
 <dt><a href="#toDurationString">toDurationString(milliseconds, maximumPrecision, minimumPrecision)</a> ⇒</dt>
 <dd><p>Converts a given duration in milliseconds to a string.</p>
+</dd>
+<dt><a href="#getWeekdayName">getWeekdayName(date)</a> ⇒</dt>
+<dd><p>Gets the name of the day of the week from <a href="date">date</a>.</p>
+</dd>
+<dt><a href="#getMonthName">getMonthName(date)</a> ⇒</dt>
+<dd><p>Gets the name of the month of the year from <a href="date">date</a>.</p>
+</dd>
+<dt><a href="#fromCurrency">fromCurrency(currency)</a> ⇒</dt>
+<dd><p>Creates a string from <a href="currency">currency</a>.</p>
+</dd>
+<dt><a href="#fromPercentage">fromPercentage(percentage)</a> ⇒</dt>
+<dd><p>Creates a string from <a href="percentage">percentage</a>.</p>
+</dd>
+<dt><a href="#fromNumber">fromNumber(number, fractionalDigits)</a> ⇒</dt>
+<dd><p>Creates a string from <a href="number">number</a>.</p>
 </dd>
 <dt><a href="#getLevenshteinDistance">getLevenshteinDistance(stringA, stringB)</a> ⇒</dt>
 <dd><p>Calculates the <a href="https://en.wikipedia.org/wiki/Levenshtein_distance">Levenshtein distance</a> between two strings.</p>
@@ -662,9 +677,9 @@ Converts a string into a date object.
 | dateString | The string to parse into a date. |
 | formFormat | If true, parses 'dateString' in the current timezone instead of UTC. |
 
-<a name="toTime"></a>
+<a name="fromTime"></a>
 
-## toTime(hoursOfDayOrDate, format) ⇒
+## fromTime(hoursOfDayOrDate, format) ⇒
 Converts a date or hours number into time strings of various formats.
 
 **Kind**: global function  
@@ -675,9 +690,9 @@ Converts a date or hours number into time strings of various formats.
 | hoursOfDayOrDate |  | A number of hours in a day (0-24) or a date object to convert to a time string. |
 | format | <code>pretty</code> | The format of the time string. |
 
-<a name="fromTime"></a>
+<a name="toTime"></a>
 
-## fromTime(formTimeString) ⇒
+## toTime(formTimeString) ⇒
 Converts a form time string to a number of hours of a day.
 
 **Kind**: global function  
@@ -700,6 +715,67 @@ Converts a given duration in milliseconds to a string.
 | milliseconds |  | Milliseconds to convert into a duration string. |
 | maximumPrecision | <code>day</code> | The maximum precision of the duration string. |
 | minimumPrecision | <code>second</code> | The minimum precision of the duration string. |
+
+<a name="getWeekdayName"></a>
+
+## getWeekdayName(date) ⇒
+Gets the name of the day of the week from [date](date).
+
+**Kind**: global function  
+**Returns**: The name of the day of the week.  
+
+| Param | Description |
+| --- | --- |
+| date | The date to get the weekday from. |
+
+<a name="getMonthName"></a>
+
+## getMonthName(date) ⇒
+Gets the name of the month of the year from [date](date).
+
+**Kind**: global function  
+**Returns**: The name of the month of the year.  
+
+| Param | Description |
+| --- | --- |
+| date | The date to get the month from. |
+
+<a name="fromCurrency"></a>
+
+## fromCurrency(currency) ⇒
+Creates a string from [currency](currency).
+
+**Kind**: global function  
+**Returns**: A string representing [currency](currency).  
+
+| Param | Description |
+| --- | --- |
+| currency | The currency to convert to a string. |
+
+<a name="fromPercentage"></a>
+
+## fromPercentage(percentage) ⇒
+Creates a string from [percentage](percentage).
+
+**Kind**: global function  
+**Returns**: A string representing [percentage](percentage).  
+
+| Param | Description |
+| --- | --- |
+| percentage | The percentage to convert to a string. |
+
+<a name="fromNumber"></a>
+
+## fromNumber(number, fractionalDigits) ⇒
+Creates a string from [number](number).
+
+**Kind**: global function  
+**Returns**: A string representing [number](number).  
+
+| Param | Default | Description |
+| --- | --- | --- |
+| number |  | The number to convert to a string. |
+| fractionalDigits | <code>2</code> | The number of digits to represent the fractional portion of the number. |
 
 <a name="getLevenshteinDistance"></a>
 
