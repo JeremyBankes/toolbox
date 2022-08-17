@@ -51,6 +51,20 @@ export default class String {
     }
 
     /**
+     * Creates an English readable list from {@link values}.
+     * @param values A list of values to make a pretty list out of.
+     * @returns A list deliminated by commas with the word 'and' seperating the last element.
+     */
+    public static toPrettyList(values: string[]) {
+        if (values.length > 1) {
+            const lastValue = values.pop();
+            return values.join(',') + ' and ' + lastValue;
+        } else {
+            return values.join(', ');
+        }
+    }
+
+    /**
      * Makes {@link singular} plural.
      * @param singular The singular word to make plural.
      * @param count The number of {@link singular}. Not 1 to pluralize.
