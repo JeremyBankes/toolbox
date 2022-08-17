@@ -134,6 +134,9 @@ If the value at <a href="path">path</a> in <a href="target">target</a> does not 
 <dt><a href="#toCamel">toCamel(string)</a> ⇒</dt>
 <dd><p>Converts <a href="string">string</a> to camelCase.</p>
 </dd>
+<dt><a href="#toPrettyList">toPrettyList(values)</a> ⇒</dt>
+<dd><p>Creates an English readable list from <a href="values">values</a>.</p>
+</dd>
 <dt><a href="#pluralize">pluralize(singular, count)</a> ⇒</dt>
 <dd><p>Makes <a href="singular">singular</a> plural.</p>
 </dd>
@@ -637,6 +640,18 @@ Converts [string](string) to camelCase.
 | Param | Description |
 | --- | --- |
 | string | The text to turn into camel case |
+
+<a name="toPrettyList"></a>
+
+## toPrettyList(values) ⇒
+Creates an English readable list from [values](values).
+
+**Kind**: global function  
+**Returns**: A list deliminated by commas with the word 'and' seperating the last element.  
+
+| Param | Description |
+| --- | --- |
+| values | A list of values to make a pretty list out of. |
 
 <a name="pluralize"></a>
 
