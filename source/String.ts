@@ -1,7 +1,8 @@
 type StringDefaults = {
     locale: Intl.LocalesArgument,
     dateFormat: Intl.DateTimeFormatOptions,
-    timeFormat: Intl.DateTimeFormatOptions
+    timeFormat: Intl.DateTimeFormatOptions,
+    currency: string // https://www.six-group.com/dam/download/financial-information/data-center/iso-currrency/lists/list_one.xml
 };
 
 type Precision = 'week' | 'day' | 'hour' | 'minute' | 'second' | 'millisecond';
@@ -17,7 +18,8 @@ export default class String {
     static defaults: StringDefaults = {
         locale: 'en-CA',
         dateFormat: { dateStyle: 'long' },
-        timeFormat: { timeStyle: 'short' }
+        timeFormat: { timeStyle: 'short' },
+        currency: 'CAD'
     }
 
     /**
@@ -120,7 +122,7 @@ export default class String {
      * @param format The format of the time string.
      * @returns The formatted time string.
      */
-    public static toTime(hoursOfDayOrDate: Date | number, format: 'form' | 'pretty' = 'pretty') {
+    public static fromTime(hoursOfDayOrDate: Date | number, format: 'form' | 'pretty' = 'pretty') {
         switch (format) {
             case 'form':
                 let hours: number;
@@ -148,7 +150,7 @@ export default class String {
      * @param formTimeString The string to parse.
      * @returns An hour of the day (0-24) representing {@link formTimeString}.
      */
-    public static fromTime(formTimeString: string) {
+    public static toTime(formTimeString: string) {
         const hours = parseInt(formTimeString.substring(0, 2));
         const minutes = parseInt(formTimeString.substring(3, 5));
         return hours + minutes / 60;
@@ -180,6 +182,52 @@ export default class String {
             pieces.push(count + ' ' + String.pluralize(item.name, count));
         }
         return pieces.join(', ');
+    }
+
+    /**
+     * Gets the name of the day of the week from {@link date}.
+     * @param date The date to get the weekday from.
+     * @returns The name of the day of the week.
+     */
+    getWeekdayName(date: Date) {
+        return date.toLocaleDateString(String.defaults.locale, { weekday: 'long' });
+    }
+
+    /**
+     * Gets the name of the month of the year from {@link date}.
+     * @param date The date to get the month from.
+     * @returns The name of the month of the year.
+     */
+    getMonthName(date: Date) {
+        return date.toLocaleDateString(String.defaults.locale, { month: 'long' });
+    }
+
+    /**
+     * Creates a string from {@link currency}.
+     * @param currency The currency to convert to a string.
+     * @returns A string representing {@link currency}.
+     */
+    fromCurrency(currency: number) {
+        return currency.toLocaleString(String.defaults.locale, { style: 'currency', currency: String.defaults.currency });
+    }
+
+    /**
+     * Creates a string from {@link percentage}.
+     * @param percentage The percentage to convert to a string.
+     * @returns A string representing {@link percentage}.
+     */
+    fromPercentage(percentage: number) {
+        return percentage.toLocaleString(String.defaults.locale, { style: 'percent' });
+    }
+
+    /**
+     * Creates a string from {@link number}.
+     * @param number The number to convert to a string.
+     * @param fractionalDigits The number of digits to represent the fractional portion of the number.
+     * @returns A string representing {@link number}.
+     */
+    fromNumber(number: number, fractionalDigits: number = 2) {
+        return number.toLocaleString(String.defaults.locale, { style: 'decimal', minimumFractionDigits: fractionalDigits, maximumFractionDigits: fractionalDigits });
     }
 
     /**
