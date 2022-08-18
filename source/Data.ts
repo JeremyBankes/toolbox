@@ -128,6 +128,8 @@ export default class Data {
                 Data.walk(target, (_, property, path) => {
                     if (typeof property !== 'object') {
                         Data.set(objectClone, path, property);
+                    } else if (property === null) {
+                        Data.set(objectClone, path, null);
                     } else if (Object.keys(property).length === 0) {
                         Data.set(objectClone, path, Array.isArray(property) ? [] : {});
                     }
