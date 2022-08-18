@@ -125,9 +125,11 @@ export default class Data {
             if (target.constructor.name !== 'Object') {
                 throw new Error('Cannot clone class. Please only clone POJOs.');
             } else {
-                Data.walk(target, (target, property, path) => {
+                Data.walk(target, (_, property, path) => {
                     if (typeof property !== 'object') {
                         Data.set(objectClone, path, property);
+                    } else if (Object.keys(property).length === 0) {
+                        Data.set(objectClone, path, Array.isArray(property) ? [] : {});
                     }
                 });
             }
