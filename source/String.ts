@@ -175,9 +175,10 @@ export default class String {
      * @param milliseconds Milliseconds to convert into a duration string.
      * @param maximumPrecision The maximum precision of the duration string.
      * @param minimumPrecision The minimum precision of the duration string.
+     * @param pluralize True to pluralize the units, false otherwise.
      * @returns A duration string.
      */
-    public static toDurationString(milliseconds: number, maximumPrecision: Precision = 'day', minimumPrecision: Precision = 'second') {
+    public static toDurationString(milliseconds: number, maximumPrecision: Precision = 'day', minimumPrecision: Precision = 'second', pluralize: boolean = false) {
         const precisions = [
             { name: 'week', milliseconds: 1000 * 60 * 60 * 24 * 7 },
             { name: 'day', milliseconds: 1000 * 60 * 60 * 24 },
@@ -193,7 +194,9 @@ export default class String {
             const item = precisions[i];
             let count = i === last ? Math.round(milliseconds / item.milliseconds) : Math.floor(milliseconds / item.milliseconds);
             milliseconds -= count * item.milliseconds;
-            pieces.push(count + ' ' + String.pluralize(item.name, count));
+            if (count !== 0) {
+                pieces.push(count + ' ' + (pluralize ? String.pluralize(item.name, count) : item.name));
+            }
         }
         return pieces.join(', ');
     }

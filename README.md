@@ -152,7 +152,7 @@ If the value at <a href="path">path</a> in <a href="target">target</a> does not 
 <dt><a href="#toTime">toTime(formTimeString)</a> ⇒</dt>
 <dd><p>Converts a form time string to a number of hours of a day.</p>
 </dd>
-<dt><a href="#toDurationString">toDurationString(milliseconds, maximumPrecision, minimumPrecision)</a> ⇒</dt>
+<dt><a href="#toDurationString">toDurationString(milliseconds, maximumPrecision, minimumPrecision, pluralize)</a> ⇒</dt>
 <dd><p>Converts a given duration in milliseconds to a string.</p>
 </dd>
 <dt><a href="#getWeekdayName">getWeekdayName(date)</a> ⇒</dt>
@@ -719,7 +719,7 @@ Converts a form time string to a number of hours of a day.
 
 <a name="toDurationString"></a>
 
-## toDurationString(milliseconds, maximumPrecision, minimumPrecision) ⇒
+## toDurationString(milliseconds, maximumPrecision, minimumPrecision, pluralize) ⇒
 Converts a given duration in milliseconds to a string.
 
 **Kind**: global function  
@@ -730,6 +730,7 @@ Converts a given duration in milliseconds to a string.
 | milliseconds |  | Milliseconds to convert into a duration string. |
 | maximumPrecision | <code>day</code> | The maximum precision of the duration string. |
 | minimumPrecision | <code>second</code> | The minimum precision of the duration string. |
+| pluralize | <code>false</code> | True to pluralize the units, false otherwise. |
 
 <a name="getWeekdayName"></a>
 
