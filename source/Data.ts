@@ -41,7 +41,11 @@ export default class Data {
             path = path.split('.');
         }
         if (path.length === 0) {
-            return target;
+            if (target === undefined || target === null) {
+                return fallback;
+            } else {
+                return target;
+            }
         } else {
             const key = path.shift();
             if (typeof target === 'object' && target !== null && key in target) {
