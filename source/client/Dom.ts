@@ -64,10 +64,10 @@ export default class Dom {
         element.classList.add(...Data.get(options, 'classList', []));
         element.textContent = Data.get(options, 'textContent', '');
         if (Data.has(options, 'innerHTML')) {
-            element.innerHTML = Data.get(options, 'innerHTML');
+            element.innerHTML = Data.get(options,  'innerHTML', null);
         }
         if (Data.has(options, 'outerHTML')) {
-            element.outerHTML = Data.get(options, 'outerHTML');
+            element.outerHTML = Data.get(options,  'outerHTML', null);
         }
         if (Data.has(options, 'attributes')) {
             for (const name in options.attributes) {

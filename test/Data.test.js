@@ -40,23 +40,23 @@ test('Data.has simple does not exist', () => {
 });
 
 test('Data.get simple does exist', () => {
-    expect(Data.get(author, 'name.first')).toBe('Jeremy');
+    expect(Data.get(author,  'name.first', null)).toBe('Jeremy');
 });
 
 test('Data.get simple does not exist', () => {
-    expect(Data.get(author, 'name.middle')).toBe(null);
+    expect(Data.get(author,  'name.middle', null)).toBe(null);
 });
 
 test('Data.get array does exist', () => {
-    expect(Data.get(author, 'favorites.colors.1')).toBe('Cyan');
+    expect(Data.get(author,  'favorites.colors.1', null)).toBe('Cyan');
 });
 
 test('Data.get object in array does exist', () => {
-    expect(Data.get(author, 'favorites.movies.1.main')).toBe('Chihiro Ogino');
+    expect(Data.get(author,  'favorites.movies.1.main', null)).toBe('Chihiro Ogino');
 });
 
 test('Data.get empty path', () => {
-    expect(Data.get(author, '')).toBe(null);
+    expect(Data.get(author,  '', null)).toBe(null);
 });
 
 test('Data.get fallback', () => {

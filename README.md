@@ -480,11 +480,11 @@ Finds a retrieves a value at [path](path) in [target](target) object.
 **Kind**: global function  
 **Returns**: The value in [target](target) at [path](path), or [fallback](fallback) if [path](path) can't be found.  
 
-| Param | Default | Description |
-| --- | --- | --- |
-| target |  | The target object. |
-| path |  | The path to retrieve a value from. |
-| fallback | <code></code> | A value to fallback on if [path](path) couldn't be found. |
+| Param | Description |
+| --- | --- |
+| target | The target object. |
+| path | The path to retrieve a value from. |
+| fallback | A value to fallback on if [path](path) couldn't be found. |
 
 <a name="getOrThrow"></a>
 

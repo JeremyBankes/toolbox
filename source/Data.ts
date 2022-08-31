@@ -36,7 +36,7 @@ export default class Data {
      * @param fallback A value to fallback on if {@link path} couldn't be found.
      * @returns The value in {@link target} at {@link path}, or {@link fallback} if {@link path} can't be found.
      */
-    public static get(target: object, path: string | (string | number | symbol)[], fallback: any = null) {
+    public static get(target: object, path: string | (string | number | symbol)[], fallback: any = undefined) {
         if (typeof path === 'string') {
             path = path.split('.');
         }
@@ -64,7 +64,7 @@ export default class Data {
      * @returns The value found at {@link path} in {@link target}.
      */
     public static getOrThrow(target: object, path: string | (string | number | symbol)[], validator: ValueValidationPredicate = (value: any) => value !== null && value !== undefined) {
-        const value = Data.get(target, path);
+        const value = Data.get(target, path, null);
         if (!validator(value)) {
             throw new Error(`Failed to find valid ${path} value in ${JSON.stringify(target)}. "${value}" value failed validation predicate.`);
         }
