@@ -1,4 +1,4 @@
-type StringDefaults = {
+type TextDefaults = {
     locale: Intl.LocalesArgument,
     dateFormat: Intl.DateTimeFormatOptions,
     timeFormat: Intl.DateTimeFormatOptions,
@@ -8,14 +8,14 @@ type StringDefaults = {
 type Precision = 'week' | 'day' | 'hour' | 'minute' | 'second' | 'millisecond';
 
 /**
- * A String manipulation moduled used for formatting and interpreting text. 
+ * A String manipulation module used for formatting and interpreting text. 
  */
-export default class String {
+export default class Text {
 
     /** 
      * The default options for text manipulations and formatting
      */
-    public static defaults: StringDefaults = {
+    public static defaults: TextDefaults = {
         locale: 'en-CA',
         dateFormat: { dateStyle: 'long' },
         timeFormat: { timeStyle: 'short' },
@@ -111,7 +111,7 @@ export default class String {
         switch (format) {
             case 'iso': return date.toISOString();
             case 'form': return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().substring(0, 10);
-            case 'pretty': return date.toLocaleDateString(String.defaults.locale, String.defaults.dateFormat);
+            case 'pretty': return date.toLocaleDateString(Text.defaults.locale, Text.defaults.dateFormat);
             default: throw new Error(`Unrecognized date format ${format}.`);
         }
     }
@@ -155,7 +155,7 @@ export default class String {
                     const minutes = Math.round((hoursOfDayOrDate - hours) * 60);
                     hoursOfDayOrDate = new Date(0, 0, 0, hours, minutes);
                 }
-                return hoursOfDayOrDate.toLocaleTimeString(String.defaults.locale, String.defaults.timeFormat);
+                return hoursOfDayOrDate.toLocaleTimeString(Text.defaults.locale, Text.defaults.timeFormat);
         }
     }
 
@@ -195,7 +195,7 @@ export default class String {
             let count = i === last ? Math.round(milliseconds / item.milliseconds) : Math.floor(milliseconds / item.milliseconds);
             milliseconds -= count * item.milliseconds;
             if (count !== 0) {
-                pieces.push(count + ' ' + (pluralize ? String.pluralize(item.name, count) : item.name));
+                pieces.push(count + ' ' + (pluralize ? Text.pluralize(item.name, count) : item.name));
             }
         }
         return pieces.join(', ');
@@ -207,7 +207,7 @@ export default class String {
      * @returns The name of the day of the week.
      */
     public static getWeekdayName(date: Date) {
-        return date.toLocaleDateString(String.defaults.locale, { weekday: 'long' });
+        return date.toLocaleDateString(Text.defaults.locale, { weekday: 'long' });
     }
 
     /**
@@ -216,7 +216,7 @@ export default class String {
      * @returns The name of the month of the year.
      */
     public static getMonthName(date: Date) {
-        return date.toLocaleDateString(String.defaults.locale, { month: 'long' });
+        return date.toLocaleDateString(Text.defaults.locale, { month: 'long' });
     }
 
     /**
@@ -225,7 +225,7 @@ export default class String {
      * @returns A string representing {@link currency}.
      */
     public static fromCurrency(currency: number) {
-        return currency.toLocaleString(String.defaults.locale, { style: 'currency', currency: String.defaults.currency });
+        return currency.toLocaleString(Text.defaults.locale, { style: 'currency', currency: Text.defaults.currency });
     }
 
     /**
@@ -234,7 +234,7 @@ export default class String {
      * @returns A string representing {@link percentage}.
      */
     public static fromPercentage(percentage: number) {
-        return percentage.toLocaleString(String.defaults.locale, { style: 'percent' });
+        return percentage.toLocaleString(Text.defaults.locale, { style: 'percent' });
     }
 
     /**
@@ -244,7 +244,7 @@ export default class String {
      * @returns A string representing {@link number}.
      */
     public static fromNumber(number: number, fractionalDigits: number = 2) {
-        return number.toLocaleString(String.defaults.locale, { style: 'decimal', minimumFractionDigits: fractionalDigits, maximumFractionDigits: fractionalDigits });
+        return number.toLocaleString(Text.defaults.locale, { style: 'decimal', minimumFractionDigits: fractionalDigits, maximumFractionDigits: fractionalDigits });
     }
 
     /**
@@ -277,7 +277,7 @@ export default class String {
      * @returns A similarity factor, 1 being identical, 0 being very different.
      */
     public static getSimilarityFactor(stringA: string, stringB: string) {
-        const distance = String.getLevenshteinDistance(stringA, stringB);
+        const distance = Text.getLevenshteinDistance(stringA, stringB);
         const averageLength = (stringA.length + stringB.length) / 2;
         return Math.max(0, 1 - distance / Math.max(1, averageLength));
     }

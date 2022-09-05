@@ -1,5 +1,5 @@
 export { default as Data } from './Data.js';
-export { default as String } from './String.js';
+export { default as Text } from './Text.js';
 
 export * as Client from './client/client.js'
 

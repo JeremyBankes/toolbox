@@ -176,6 +176,54 @@ If the value at <a href="path">path</a> in <a href="target">target</a> does not 
 <dt><a href="#getSimilarityFactor">getSimilarityFactor(stringA, stringB)</a> ⇒</dt>
 <dd><p>Calculates a normalized similarity factor between two strings. Determines how similar two strings are. Used for fuzzy string checking.</p>
 </dd>
+<dt><a href="#toSlug">toSlug(string)</a> ⇒</dt>
+<dd><p>Converts <a href="string">string</a> to a url-slug. Note that this function treats camel casing as seperate words. Convert <a href="string">string</a> to lower case first to avoid this functionality.</p>
+</dd>
+<dt><a href="#toCamel">toCamel(string)</a> ⇒</dt>
+<dd><p>Converts <a href="string">string</a> to camelCase.</p>
+</dd>
+<dt><a href="#toPrettyList">toPrettyList(values)</a> ⇒</dt>
+<dd><p>Creates an English readable list from <a href="values">values</a>.</p>
+</dd>
+<dt><a href="#pluralize">pluralize(singular, count)</a> ⇒</dt>
+<dd><p>Makes <a href="singular">singular</a> plural.</p>
+</dd>
+<dt><a href="#fromDate">fromDate(date, format)</a> ⇒</dt>
+<dd><p>Converts a date object into strings of various formats.</p>
+</dd>
+<dt><a href="#toDate">toDate(dateString, formFormat)</a> ⇒</dt>
+<dd><p>Converts a string into a date object.</p>
+</dd>
+<dt><a href="#fromTime">fromTime(hoursOfDayOrDate, format)</a> ⇒</dt>
+<dd><p>Converts a date or hours number into time strings of various formats.</p>
+</dd>
+<dt><a href="#toTime">toTime(formTimeString)</a> ⇒</dt>
+<dd><p>Converts a form time string to a number of hours of a day.</p>
+</dd>
+<dt><a href="#toDurationString">toDurationString(milliseconds, maximumPrecision, minimumPrecision, pluralize)</a> ⇒</dt>
+<dd><p>Converts a given duration in milliseconds to a string.</p>
+</dd>
+<dt><a href="#getWeekdayName">getWeekdayName(date)</a> ⇒</dt>
+<dd><p>Gets the name of the day of the week from <a href="date">date</a>.</p>
+</dd>
+<dt><a href="#getMonthName">getMonthName(date)</a> ⇒</dt>
+<dd><p>Gets the name of the month of the year from <a href="date">date</a>.</p>
+</dd>
+<dt><a href="#fromCurrency">fromCurrency(currency)</a> ⇒</dt>
+<dd><p>Creates a string from <a href="currency">currency</a>.</p>
+</dd>
+<dt><a href="#fromPercentage">fromPercentage(percentage)</a> ⇒</dt>
+<dd><p>Creates a string from <a href="percentage">percentage</a>.</p>
+</dd>
+<dt><a href="#fromNumber">fromNumber(number, fractionalDigits)</a> ⇒</dt>
+<dd><p>Creates a string from <a href="number">number</a>.</p>
+</dd>
+<dt><a href="#getLevenshteinDistance">getLevenshteinDistance(stringA, stringB)</a> ⇒</dt>
+<dd><p>Calculates the <a href="https://en.wikipedia.org/wiki/Levenshtein_distance">Levenshtein distance</a> between two strings.</p>
+</dd>
+<dt><a href="#getSimilarityFactor">getSimilarityFactor(stringA, stringB)</a> ⇒</dt>
+<dd><p>Calculates a normalized similarity factor between two strings. Determines how similar two strings are. Used for fuzzy string checking.</p>
+</dd>
 </dl>
 
 <a name="get"></a>
@@ -616,6 +664,208 @@ Used to optionally include [value](value)'s properties when defining an inline o
 | --- | --- |
 | condition | The condition to be checked. |
 | value | The object with properties to include in an inline object definition if [condition](condition) is met. |
+
+<a name="toSlug"></a>
+
+## toSlug(string) ⇒
+Converts [string](string) to a url-slug. Note that this function treats camel casing as seperate words. Convert [string](string) to lower case first to avoid this functionality.
+
+**Kind**: global function  
+**Returns**: a-slug-string  
+
+| Param | Description |
+| --- | --- |
+| string | The text to turn into a slug |
+
+<a name="toCamel"></a>
+
+## toCamel(string) ⇒
+Converts [string](string) to camelCase.
+
+**Kind**: global function  
+**Returns**: aCamelCaseString  
+
+| Param | Description |
+| --- | --- |
+| string | The text to turn into camel case |
+
+<a name="toPrettyList"></a>
+
+## toPrettyList(values) ⇒
+Creates an English readable list from [values](values).
+
+**Kind**: global function  
+**Returns**: A list deliminated by commas with the word 'and' seperating the last element.  
+
+| Param | Description |
+| --- | --- |
+| values | A list of values to make a pretty list out of. |
+
+<a name="pluralize"></a>
+
+## pluralize(singular, count) ⇒
+Makes [singular](singular) plural.
+
+**Kind**: global function  
+**Returns**: The plural of [singular](singular).  
+
+| Param | Default | Description |
+| --- | --- | --- |
+| singular |  | The singular word to make plural. |
+| count | <code>0</code> | The number of [singular](singular). Not 1 to pluralize. |
+
+<a name="fromDate"></a>
+
+## fromDate(date, format) ⇒
+Converts a date object into strings of various formats.
+
+**Kind**: global function  
+**Returns**: A formatted date string.  
+
+| Param | Default | Description |
+| --- | --- | --- |
+| date |  | The date to convert. |
+| format | <code>pretty</code> | The format to use. |
+
+<a name="toDate"></a>
+
+## toDate(dateString, formFormat) ⇒
+Converts a string into a date object.
+
+**Kind**: global function  
+**Returns**: The parsed date.  
+
+| Param | Description |
+| --- | --- |
+| dateString | The string to parse into a date. |
+| formFormat | If true, parses 'dateString' in the current timezone instead of UTC. |
+
+<a name="fromTime"></a>
+
+## fromTime(hoursOfDayOrDate, format) ⇒
+Converts a date or hours number into time strings of various formats.
+
+**Kind**: global function  
+**Returns**: The formatted time string.  
+
+| Param | Default | Description |
+| --- | --- | --- |
+| hoursOfDayOrDate |  | A number of hours in a day (0-24) or a date object to convert to a time string. |
+| format | <code>pretty</code> | The format of the time string. |
+
+<a name="toTime"></a>
+
+## toTime(formTimeString) ⇒
+Converts a form time string to a number of hours of a day.
+
+**Kind**: global function  
+**Returns**: An hour of the day (0-24) representing [formTimeString](formTimeString).  
+
+| Param | Description |
+| --- | --- |
+| formTimeString | The string to parse. |
+
+<a name="toDurationString"></a>
+
+## toDurationString(milliseconds, maximumPrecision, minimumPrecision, pluralize) ⇒
+Converts a given duration in milliseconds to a string.
+
+**Kind**: global function  
+**Returns**: A duration string.  
+
+| Param | Default | Description |
+| --- | --- | --- |
+| milliseconds |  | Milliseconds to convert into a duration string. |
+| maximumPrecision | <code>day</code> | The maximum precision of the duration string. |
+| minimumPrecision | <code>second</code> | The minimum precision of the duration string. |
+| pluralize | <code>false</code> | True to pluralize the units, false otherwise. |
+
+<a name="getWeekdayName"></a>
+
+## getWeekdayName(date) ⇒
+Gets the name of the day of the week from [date](date).
+
+**Kind**: global function  
+**Returns**: The name of the day of the week.  
+
+| Param | Description |
+| --- | --- |
+| date | The date to get the weekday from. |
+
+<a name="getMonthName"></a>
+
+## getMonthName(date) ⇒
+Gets the name of the month of the year from [date](date).
+
+**Kind**: global function  
+**Returns**: The name of the month of the year.  
+
+| Param | Description |
+| --- | --- |
+| date | The date to get the month from. |
+
+<a name="fromCurrency"></a>
+
+## fromCurrency(currency) ⇒
+Creates a string from [currency](currency).
+
+**Kind**: global function  
+**Returns**: A string representing [currency](currency).  
+
+| Param | Description |
+| --- | --- |
+| currency | The currency to convert to a string. |
+
+<a name="fromPercentage"></a>
+
+## fromPercentage(percentage) ⇒
+Creates a string from [percentage](percentage).
+
+**Kind**: global function  
+**Returns**: A string representing [percentage](percentage).  
+
+| Param | Description |
+| --- | --- |
+| percentage | The percentage to convert to a string. |
+
+<a name="fromNumber"></a>
+
+## fromNumber(number, fractionalDigits) ⇒
+Creates a string from [number](number).
+
+**Kind**: global function  
+**Returns**: A string representing [number](number).  
+
+| Param | Default | Description |
+| --- | --- | --- |
+| number |  | The number to convert to a string. |
+| fractionalDigits | <code>2</code> | The number of digits to represent the fractional portion of the number. |
+
+<a name="getLevenshteinDistance"></a>
+
+## getLevenshteinDistance(stringA, stringB) ⇒
+Calculates the [Levenshtein distance](https://en.wikipedia.org/wiki/Levenshtein_distance) between two strings.
+
+**Kind**: global function  
+**Returns**: The distance between [stringA](stringA) and [stringB](stringB)  
+
+| Param | Description |
+| --- | --- |
+| stringA | The first string |
+| stringB | The second string |
+
+<a name="getSimilarityFactor"></a>
+
+## getSimilarityFactor(stringA, stringB) ⇒
+Calculates a normalized similarity factor between two strings. Determines how similar two strings are. Used for fuzzy string checking.
+
+**Kind**: global function  
+**Returns**: A similarity factor, 1 being identical, 0 being very different.  
+
+| Param | Description |
+| --- | --- |
+| stringA | The first string |
+| stringB | The second string |
 
 <a name="toSlug"></a>
 
