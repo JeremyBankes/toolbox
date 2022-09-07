@@ -194,6 +194,24 @@ export default class Data {
     }
 
     /**
+     * Converts any nested properties in {@link target} that can be parsed as numbers to numbers.
+     * @param target 
+     * @returns A copy of {@link target} with all of its properties that can be parsed as numbers, parsed as numbers.
+     */
+    public static numberize(target: object) {
+        target = Data.clone(target, true);
+        Data.walk(target, (_, property, path) => {
+            if (typeof property === 'string' && /^-?[0-9.]+$/.test(property)) {
+                const attemptedNumber = parseFloat(property);
+                if (!isNaN(attemptedNumber)) {
+                    Data.set(target, path, attemptedNumber);
+                }
+            }
+        });
+        return target;
+    }
+
+    /**
      * Ensures that {@link target} has a value at {@link path} with the same type of {@link fallback}.
      * If the value at {@link path} in {@link target} does not exist, or has a differing type than {@link fallback}, {@link fallback} will take it's place.
      * @param target The target object.

@@ -118,6 +118,9 @@ I.E. { name: { first: &#39;Jeremy&#39;, last: &#39;Bankes&#39; } } -&gt; { &#39;
 <dt><a href="#hierarchize">hierarchize(target)</a> ⇒</dt>
 <dd><p>Converts a flattened object back into an object with a nested hierarchy.</p>
 </dd>
+<dt><a href="#numberize">numberize(target)</a> ⇒</dt>
+<dd><p>Converts any nested properties in <a href="target">target</a> that can be parsed as numbers to numbers.</p>
+</dd>
 <dt><a href="#ensure">ensure(target, path, fallback)</a> ⇒</dt>
 <dd><p>Ensures that <a href="target">target</a> has a value at <a href="path">path</a> with the same type of <a href="fallback">fallback</a>.
 If the value at <a href="path">path</a> in <a href="target">target</a> does not exist, or has a differing type than <a href="fallback">fallback</a>, <a href="fallback">fallback</a> will take it&#39;s place.</p>
@@ -620,6 +623,18 @@ Converts a flattened object back into an object with a nested hierarchy.
 
 **Kind**: global function  
 **Returns**: a hierarchized version of [target](target) with a nested hierarchy.  
+
+| Param |
+| --- |
+| target | 
+
+<a name="numberize"></a>
+
+## numberize(target) ⇒
+Converts any nested properties in [target](target) that can be parsed as numbers to numbers.
+
+**Kind**: global function  
+**Returns**: A copy of [target](target) with all of its properties that can be parsed as numbers, parsed as numbers.  
 
 | Param |
 | --- |
