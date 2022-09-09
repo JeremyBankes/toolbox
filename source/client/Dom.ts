@@ -64,10 +64,10 @@ export default class Dom {
         element.classList.add(...Data.get(options, 'classList', []));
         element.textContent = Data.get(options, 'textContent', '');
         if (Data.has(options, 'innerHTML')) {
-            element.innerHTML = Data.get(options,  'innerHTML', null);
+            element.innerHTML = Data.get(options, 'innerHTML', null);
         }
         if (Data.has(options, 'outerHTML')) {
-            element.outerHTML = Data.get(options,  'outerHTML', null);
+            element.outerHTML = Data.get(options, 'outerHTML', null);
         }
         if (Data.has(options, 'attributes')) {
             for (const name in options.attributes) {
@@ -294,17 +294,22 @@ export default class Dom {
         return Data.has(globalThis, 'window');
     }
 
+    static loaded: boolean = false;
+
     static {
         if (Dom.isBrowser()) {
             addEventListener('DOMContentLoaded', () => {
-                const mapping = Dom.getMapping();
-                Promise.all(Dom._onReadyListeners.map(readyListener => {
-                    return readyListener(mapping);
-                })).catch(error => {
-                    for (const errorListner of Dom._onErrorListeners) {
-                        errorListner(error, mapping);
-                    }
-                });
+                if (!Dom.loaded) {
+                    const mapping = Dom.getMapping();
+                    Promise.all(Dom._onReadyListeners.map(readyListener => {
+                        return readyListener(mapping);
+                    })).catch(error => {
+                        for (const errorListner of Dom._onErrorListeners) {
+                            errorListner(error, mapping);
+                        }
+                    });
+                    Dom.loaded = true;
+                }
             });
         }
     }
