@@ -36,7 +36,7 @@ export default class Data {
      * @param fallback A value to fallback on if {@link path} couldn't be found.
      * @returns The value in {@link target} at {@link path}, or {@link fallback} if {@link path} can't be found.
      */
-    public static get(target: object, path: string | (string | number | symbol)[], fallback: any = undefined) {
+    public static get<FallbackType>(target: object, path: string | (string | number | symbol)[], fallback: FallbackType = undefined): FallbackType {
         if (typeof path === 'string') {
             path = path.split('.');
         }
@@ -44,7 +44,7 @@ export default class Data {
             if (target === undefined || target === null) {
                 return fallback;
             } else {
-                return target;
+                return target as FallbackType;
             }
         } else {
             const key = path.shift();
@@ -123,7 +123,7 @@ export default class Data {
      * @param deep True to perform a deep copy, false to perform a shallow copy.
      * @returns A copy of {@link target}.
      */
-    public static clone(target: object, deep: boolean = false) {
+    public static clone<TargetType extends object>(target: TargetType, deep: boolean = false): TargetType {
         if (deep) {
             const objectClone = {};
             if (target.constructor.name !== 'Object') {
@@ -139,7 +139,7 @@ export default class Data {
                     }
                 });
             }
-            return objectClone;
+            return objectClone as TargetType;
         } else {
             return { ...target };
         }
@@ -171,7 +171,7 @@ export default class Data {
      * @returns A flattend version of {@link target} without any nesting.
      */
     public static flatten(target: object) {
-        const flattenedTarget = {};
+        const flattenedTarget: any = {};
         Data.walk(target, (_, property, path) => {
             if (typeof property !== 'object' || property instanceof Date) {
                 flattenedTarget[path] = property;
@@ -186,7 +186,7 @@ export default class Data {
      * @returns a hierarchized version of {@link target} with a nested hierarchy.
      */
     public static hierarchize(target: object) {
-        const object = {};
+        const object: any = {};
         for (const key in target) {
             Data.set(object, key, target[key]);
         }
@@ -198,7 +198,7 @@ export default class Data {
      * @param target 
      * @returns A copy of {@link target} with all of its properties that can be parsed as numbers, parsed as numbers.
      */
-    public static numberize(target: object) {
+    public static numberize(target: object): any {
         target = Data.clone(target, true);
         Data.walk(target, (_, property, path) => {
             if (typeof property === 'string' && /^-?[0-9.]+$/.test(property)) {
@@ -219,7 +219,7 @@ export default class Data {
      * @param fallback The value to fallback to at {@link path} in {@link target} to if it doesn't already exist.
      * @returns The value at {@link path} in {@link target}.
      */
-    public static ensure(target: object, path: string, fallback: any) {
+    public static ensure<TargetType extends object>(target: TargetType, path: string, fallback: TargetType): TargetType {
         if (!Data.has(target, path) || typeof Data.get(target, path) !== typeof fallback) {
             Data.set(target, path, fallback);
         }
@@ -233,7 +233,7 @@ export default class Data {
      * @returns A copy of {@link target} with its properties filtered based on {@link predicate}.
      */
     public static filter(target: object, predicate: ObjectFilterPredicate) {
-        const filteredObject = Data.clone(target, true);
+        const filteredObject: any = Data.clone(target, true);
         Data.walk(target, (target, property, path, level) => {
             if (!predicate(target, property, path, level)) {
                 Data.remove(filteredObject, path);
@@ -248,14 +248,14 @@ export default class Data {
      * @param value The object with properties to include in an inline object definition if {@link condition} is met.
      * @returns The given {@link value} if {@link condition} is met, an empty array otherwise.
      */
-    public static conditional<Type extends any[] | object>(condition: boolean, value: Type): Type {
+    public static conditional<ValueType extends any[] | object>(condition: boolean, value: ValueType): ValueType {
         if (condition) {
             return value;
         } else {
             if (Array.isArray(value)) {
-                return [] as Type;
+                return [] as ValueType;
             } else {
-                return {} as Type;
+                return {} as ValueType;
             }
         }
     }
