@@ -123,10 +123,11 @@ export default class Text {
     * @returns The parsed date.
     */
     public static toDate(dateString: string, formFormat: boolean) {
+        const date = new Date(dateString);
         if (formFormat) {
-            return new Date(new Date(dateString).getTime() + new Date().getTimezoneOffset() * 60000);
+            return new Date(date.getTime() + date.getTimezoneOffset() * 60000);
         } else {
-            return new Date(dateString);
+            return date;
         }
     }
 
