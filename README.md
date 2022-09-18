@@ -20,6 +20,9 @@ An easy-to-use typed, wrapping of documnet.getElementById()</p>
 <dt><a href="#getJson">getJson(name)</a> ⇒</dt>
 <dd><p>Retrieves a JSON cookie by name.</p>
 </dd>
+<dt><a href="#getAll">getAll()</a> ⇒</dt>
+<dd><p>Retrieves all cookies and returns each key, value pair as an object.</p>
+</dd>
 <dt><a href="#set">set(name, value)</a></dt>
 <dd><p>Sets a cookie named <a href="name">name</a> to <a href="value">value</a>.</p>
 </dd>
@@ -253,6 +256,13 @@ Retrieves a JSON cookie by name.
 | --- | --- |
 | name | The name of the cookie to get the value of. |
 
+<a name="getAll"></a>
+
+## getAll() ⇒
+Retrieves all cookies and returns each key, value pair as an object.
+
+**Kind**: global function  
+**Returns**: An object where each key in a cookie name that maps a cookie value.  
 <a name="set"></a>
 
 ## set(name, value)

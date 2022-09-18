@@ -39,6 +39,20 @@ export default class Cookies {
     }
 
     /**
+     * Retrieves all cookies and returns each key, value pair as an object.
+     * @returns An object where each key in a cookie name that maps a cookie value.
+     */
+    public static getAll(): { [key: string]: string } {
+        const cookies = {};
+        const valueStrings = document.cookie.split(';');
+        for (const valueString of valueStrings) {
+            const [key, value] = valueString.trim().split('=').map(decodeURIComponent);
+            cookies[key] = value;
+        }
+        return cookies;
+    }
+
+    /**
      * Sets a cookie named {@link name} to {@link value}.
      * @param name The name of the cookie to set the value of.
      * @param value The value of the cookie to be set.
