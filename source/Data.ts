@@ -126,19 +126,15 @@ export default class Data {
     public static clone<TargetType extends object>(target: TargetType, deep: boolean = false): TargetType {
         if (deep) {
             const objectClone = {};
-            if (target.constructor.name !== 'Object') {
-                throw new Error('Cannot clone class. Please only clone POJOs.');
-            } else {
-                Data.walk(target, (_, property, path) => {
-                    if (typeof property !== 'object') {
-                        Data.set(objectClone, path, property);
-                    } else if (property === null) {
-                        Data.set(objectClone, path, null);
-                    } else if (Object.keys(property).length === 0) {
-                        Data.set(objectClone, path, Array.isArray(property) ? [] : {});
-                    }
-                });
-            }
+            Data.walk(target, (_, property, path) => {
+                if (typeof property !== 'object') {
+                    Data.set(objectClone, path, property);
+                } else if (property === null) {
+                    Data.set(objectClone, path, null);
+                } else if (Object.keys(property).length === 0) {
+                    Data.set(objectClone, path, Array.isArray(property) ? [] : {});
+                }
+            });
             return objectClone as TargetType;
         } else {
             return { ...target };
