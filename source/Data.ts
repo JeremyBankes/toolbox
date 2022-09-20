@@ -125,7 +125,7 @@ export default class Data {
      */
     public static clone<TargetType extends object>(target: TargetType, deep: boolean = false): TargetType {
         if (deep) {
-            const objectClone = {};
+            const objectClone = Array.isArray(target) ? [] : {};
             Data.walk(target, (_, property, path) => {
                 if (typeof property !== 'object') {
                     Data.set(objectClone, path, property);
@@ -220,6 +220,44 @@ export default class Data {
             Data.set(target, path, fallback);
         }
         return Data.get(target, path);
+    }
+
+    /**
+     * Validates that {@link data} matches the given {@link schema}.
+     * The hierarchy of {@link schema} represents the hierarchy that {@link data} should match.
+     * The values of {@link schema} represent the types that the values in {@link data} should match. (Evaluated by typeof) 
+     * 
+     * I.E.
+     * data   = { name: { first: 'Jeremy', last: 'Bankes' }, age: 21       }
+     * schema = { name: { first: 'string', last: 'string' }, age: 'number' }
+     * 
+     * @param data The target object to validate.
+     * @param schema The schema that {@link data} should match.
+     * @param error If true, throws a validation error if the schema isn't matched.
+     * @returns True if validation is passed, false otherwise.
+     */
+    public static validate(data: object, schema: object, error: boolean = true): boolean {
+        const failures = [];
+        Data.walk(schema, (target, property, path) => {
+            if (typeof property === 'string') {
+                if (!Data.has(data, path)) {
+                    failures.push(`Missing path "${path}".`);
+                } else {
+                    const type = typeof Data.get(data, path);
+                    if (type !== property) {
+                        failures.push(`Incorrect data type for "${path}". (Expected "${property}", got "${type}").`);
+                    }
+                }
+            }
+        });
+        if (failures.length === 0) {
+            return true;
+        } else if (error) {
+            failures.push('Validation failed.');
+            throw new Error(failures.join(' '));
+        } else {
+            return false;
+        }
     }
 
     /**
