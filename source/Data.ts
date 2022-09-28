@@ -1,5 +1,5 @@
-type WalkObjectCallback = (target: object, property: any, path: string, level: number) => void;
-type ObjectFilterPredicate = (target: object, property: any, path: string, level: number) => boolean;
+type WalkObjectCallback = (target: any, property: any, path: string, level: number) => void;
+type ObjectFilterPredicate = (target: any, property: any, path: string, level: number) => boolean;
 type ValueValidationPredicate = (value: any) => boolean;
 
 /**
@@ -13,7 +13,7 @@ export default class Data {
      * @param path The path to check the existance of.
      * @returns True if {@link target} has {@link path}.
      */
-    public static has(target: object, path: string | (string | number | symbol)[]) {
+    public static has(target: any, path: string | (string | number | symbol)[]) {
         if (typeof path === 'string') {
             path = path.split('.');
         }
@@ -36,7 +36,7 @@ export default class Data {
      * @param fallback A value to fallback on if {@link path} couldn't be found.
      * @returns The value in {@link target} at {@link path}, or {@link fallback} if {@link path} can't be found.
      */
-    public static get<FallbackType>(target: object, path: string | (string | number | symbol)[], fallback: FallbackType = undefined): FallbackType {
+    public static get<FallbackType>(target: any, path: string | (string | number | symbol)[], fallback: FallbackType = undefined): FallbackType {
         if (typeof path === 'string') {
             path = path.split('.');
         }
@@ -63,7 +63,7 @@ export default class Data {
      * @param validator A predicate to validate the value found at {@link path}.
      * @returns The value found at {@link path} in {@link target}.
      */
-    public static getOrThrow(target: object, path: string | (string | number | symbol)[], validator: ValueValidationPredicate = (value: any) => value !== null && value !== undefined) {
+    public static getOrThrow(target: any, path: string | (string | number | symbol)[], validator: ValueValidationPredicate = (value: any) => value !== null && value !== undefined) {
         const value = Data.get(target, path, null);
         if (!validator(value)) {
             throw new Error(`Failed to find valid ${path} value in ${JSON.stringify(target)}. "${value}" value failed validation predicate.`);
@@ -77,7 +77,7 @@ export default class Data {
      * @param path The path to set {@link value} at.
      * @param value The value to be set.
      */
-    public static set(target: object, path: string | (string | number | symbol)[], value: any) {
+    public static set(target: any, path: string | (string | number | symbol)[], value: any) {
         if (typeof path === 'string') {
             path = path.split('.');
         }
@@ -100,7 +100,7 @@ export default class Data {
      * @param path The path of the value to remove from {@link target}.
      * @returns The removed value, or null if no value was removed.
      */
-    public static remove(target: object, path: string | (string | number | symbol)[]) {
+    public static remove(target: any, path: string | (string | number | symbol)[]) {
         if (typeof path === 'string') {
             path = path.split('.');
         }
@@ -148,7 +148,7 @@ export default class Data {
      * @param path The path to start walking in {@link target}.
      * @param level The level of nesting from the starting path in {@link target}.
      */
-    public static walk(target: object, callback: WalkObjectCallback, path: string = '', level: number = 0) {
+    public static walk(target: any, callback: WalkObjectCallback, path: string = '', level: number = 0) {
         for (const key in target) {
             const value = target[key];
             const valuePath = path === '' ? key : path + '.' + key;
@@ -166,7 +166,7 @@ export default class Data {
      * @param target The target object
      * @returns A flattend version of {@link target} without any nesting.
      */
-    public static flatten(target: object) {
+    public static flatten(target: any) {
         const flattenedTarget: any = {};
         Data.walk(target, (_, property, path) => {
             if (typeof property !== 'object' || property instanceof Date) {
@@ -181,7 +181,7 @@ export default class Data {
      * @param target
      * @returns a hierarchized version of {@link target} with a nested hierarchy.
      */
-    public static hierarchize(target: object) {
+    public static hierarchize(target: any) {
         const object: any = {};
         for (const key in target) {
             Data.set(object, key, target[key]);
@@ -194,7 +194,7 @@ export default class Data {
      * @param target 
      * @returns A copy of {@link target} with all of its properties that can be parsed as numbers, parsed as numbers.
      */
-    public static numberize(target: object): any {
+    public static numberize(target: any): any {
         target = Data.clone(target, true);
         Data.walk(target, (_, property, path) => {
             if (typeof property === 'string' && /^-?[0-9.]+$/.test(property)) {
@@ -215,7 +215,7 @@ export default class Data {
      * @param fallback The value to fallback to at {@link path} in {@link target} to if it doesn't already exist.
      * @returns The value at {@link path} in {@link target}.
      */
-    public static ensure<TargetType extends object>(target: TargetType, path: string, fallback: TargetType): TargetType {
+    public static ensure<TargetType extends any>(target: TargetType, path: string, fallback: TargetType): TargetType {
         if (!Data.has(target, path) || typeof Data.get(target, path) !== typeof fallback) {
             Data.set(target, path, fallback);
         }
@@ -236,7 +236,7 @@ export default class Data {
      * @param error If true, throws a validation error if the schema isn't matched.
      * @returns True if validation is passed, false otherwise.
      */
-    public static validate(data: object, schema: object, error: boolean = true): boolean {
+    public static validate(data: any, schema: any, error: boolean = true): boolean {
         const failures = [];
         Data.walk(schema, (target, property, path) => {
             if (typeof property === 'string') {
@@ -266,7 +266,7 @@ export default class Data {
      * @param predicate The predicate to determine which properties to filter. Return true to keep property, false to filter it.
      * @returns A copy of {@link target} with its properties filtered based on {@link predicate}.
      */
-    public static filter(target: object, predicate: ObjectFilterPredicate) {
+    public static filter(target: any, predicate: ObjectFilterPredicate) {
         const filteredObject: any = Data.clone(target, true);
         Data.walk(target, (target, property, path, level) => {
             if (!predicate(target, property, path, level)) {
@@ -282,7 +282,7 @@ export default class Data {
      * @param value The object with properties to include in an inline object definition if {@link condition} is met.
      * @returns The given {@link value} if {@link condition} is met, an empty array otherwise.
      */
-    public static conditional<ValueType extends any[] | object>(condition: boolean, value: ValueType): ValueType {
+    public static conditional<ValueType extends any[] | any>(condition: boolean, value: ValueType): ValueType {
         if (condition) {
             return value;
         } else {
