@@ -165,8 +165,8 @@ export default class Data {
         for (const key in target) {
             const value = target[key];
             const valuePath = path === '' ? key : path + '.' + key;
-            callback(target, value, valuePath, level);
-            if (typeof value === 'object' && value !== null) {
+            const finished = callback(target, value, valuePath, level);
+            if (!finished && typeof value === 'object' && value !== null) {
                 Data.walk(value, callback, valuePath, level + 1);
             }
         }
