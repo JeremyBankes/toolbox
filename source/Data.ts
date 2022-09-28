@@ -1,6 +1,18 @@
-type WalkObjectCallback = (target: any, property: any, path: string, level: number) => void;
 type ObjectFilterPredicate = (target: any, property: any, path: string, level: number) => boolean;
 type ValueValidationPredicate = (value: any) => boolean;
+
+interface WalkObjectCallback {
+
+    /**
+     * @param target The direct parent object of {@link property}. (Not necessarily the object being walked.)
+     * @param property The value of a property within {@link target}.
+     * @param path A string representing the path to {@link property} in the object being walked.
+     * @param level The depth of {@link property} within the object being walked.
+     * @returns True representing being finished with {@link property}, and to stop traversing its keys. False to continute.
+     */
+    (target: any, property: any, path: string, level: number): boolean;
+
+}
 
 /**
  * A data manipulation module primarily used for reading and altering objects.
@@ -134,6 +146,7 @@ export default class Data {
                 } else if (Object.keys(property).length === 0) {
                     Data.set(objectClone, path, Array.isArray(property) ? [] : {});
                 }
+                return false;
             });
             return objectClone as TargetType;
         } else {
@@ -171,7 +184,9 @@ export default class Data {
         Data.walk(target, (_, property, path) => {
             if (typeof property !== 'object' || property instanceof Date) {
                 flattenedTarget[path] = property;
+                return true;
             }
+            return false;
         });
         return flattenedTarget;
     }
@@ -203,6 +218,7 @@ export default class Data {
                     Data.set(target, path, attemptedNumber);
                 }
             }
+            return false;
         });
         return target;
     }
@@ -248,7 +264,9 @@ export default class Data {
                         failures.push(`Incorrect data type for "${path}". (Expected "${property}", got "${type}").`);
                     }
                 }
+                return true;
             }
+            return false;
         });
         if (failures.length === 0) {
             return true;
@@ -271,7 +289,9 @@ export default class Data {
         Data.walk(target, (target, property, path, level) => {
             if (!predicate(target, property, path, level)) {
                 Data.remove(filteredObject, path);
+                return true;
             }
+            return false;
         });
         return filteredObject;
     }
