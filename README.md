@@ -128,6 +128,14 @@ I.E. { name: { first: &#39;Jeremy&#39;, last: &#39;Bankes&#39; } } -&gt; { &#39;
 <dd><p>Ensures that <a href="target">target</a> has a value at <a href="path">path</a> with the same type of <a href="fallback">fallback</a>.
 If the value at <a href="path">path</a> in <a href="target">target</a> does not exist, or has a differing type than <a href="fallback">fallback</a>, <a href="fallback">fallback</a> will take it&#39;s place.</p>
 </dd>
+<dt><a href="#validate">validate(data, schema, error)</a> ⇒</dt>
+<dd><p>Validates that <a href="data">data</a> matches the given <a href="schema">schema</a>.
+The hierarchy of <a href="schema">schema</a> represents the hierarchy that <a href="data">data</a> should match.
+The values of <a href="schema">schema</a> represent the types that the values in <a href="data">data</a> should match. (Evaluated by typeof)</p>
+<p>I.E.
+data   = { name: { first: &#39;Jeremy&#39;, last: &#39;Bankes&#39; }, age: 21       }
+schema = { name: { first: &#39;string&#39;, last: &#39;string&#39; }, age: &#39;number&#39; }</p>
+</dd>
 <dt><a href="#filter">filter(target, predicate)</a> ⇒</dt>
 <dd><p>Filters nested properties from <a href="target">target</a> based on <a href="predicate">predicate</a>.</p>
 </dd>
@@ -663,6 +671,20 @@ Ensures that [target](target) has a value at [path](path) with the same type of 
 | target | The target object. |
 | path | The path to ensure has a valid value of the same type as [fallback](fallback). |
 | fallback | The value to fallback to at [path](path) in [target](target) to if it doesn't already exist. |
+
+<a name="validate"></a>
+
+## validate(data, schema, error) ⇒
+Validates that [data](data) matches the given [schema](schema).The hierarchy of [schema](schema) represents the hierarchy that [data](data) should match.The values of [schema](schema) represent the types that the values in [data](data) should match. (Evaluated by typeof)I.E.data   = { name: { first: 'Jeremy', last: 'Bankes' }, age: 21       }schema = { name: { first: 'string', last: 'string' }, age: 'number' }
+
+**Kind**: global function  
+**Returns**: True if validation is passed, false otherwise.  
+
+| Param | Default | Description |
+| --- | --- | --- |
+| data |  | The target object to validate. |
+| schema |  | The schema that [data](data) should match. |
+| error | <code>true</code> | If true, throws a validation error if the schema isn't matched. |
 
 <a name="filter"></a>
 
