@@ -131,6 +131,7 @@ export default class Dom {
                 if (typeof property !== 'object') {
                     formData.append(path, property);
                 }
+                return false;
             });
         }
         for (const [key, value] of formData) {
