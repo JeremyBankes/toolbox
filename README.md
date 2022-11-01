@@ -44,6 +44,9 @@ An easy-to-use typed, wrapping of documnet.getElementById()</p>
 <dt><a href="#create">create(options)</a> ⇒</dt>
 <dd><p>Creates an HTML element</p>
 </dd>
+<dt><a href="#exists">exists(elementId)</a> ⇒</dt>
+<dd><p>Checks to see if an element with the ID &#39;elementId&#39; exists in the DOM.</p>
+</dd>
 <dt><a href="#clear">clear(container)</a></dt>
 <dd><p>Removes all children from a node.</p>
 </dd>
@@ -55,6 +58,15 @@ An easy-to-use typed, wrapping of documnet.getElementById()</p>
 </dd>
 <dt><a href="#clearFormSection">clearFormSection(section)</a></dt>
 <dd><p>Clears the value of the inputs within a certain section within a form.</p>
+</dd>
+<dt><a href="#submitFormWithValidation">submitFormWithValidation(form)</a></dt>
+<dd><p>Submits a form whilst triggering HTML&#39;s default form validation.</p>
+</dd>
+<dt><a href="#pulse">pulse(element, color)</a></dt>
+<dd><p>Pulses a halo affect around an element to bring attention to it.</p>
+</dd>
+<dt><a href="#getCssVariable">getCssVariable(name)</a> ⇒</dt>
+<dd><p>Get a computed value of a css variable.</p>
 </dd>
 <dt><a href="#setSlowedInputListener">setSlowedInputListener(input, callback, delay)</a></dt>
 <dd><p>Attaches a input listener that only fires a given amount of time after the user has stopped inputting.
@@ -201,6 +213,9 @@ schema = { name: { first: &#39;string&#39;, last: &#39;string&#39; }, age: &#39;
 </dd>
 <dt><a href="#pluralize">pluralize(singular, count)</a> ⇒</dt>
 <dd><p>Makes <a href="singular">singular</a> plural.</p>
+</dd>
+<dt><a href="#withNumberSuffix">withNumberSuffix(value)</a> ⇒</dt>
+<dd><p>Adds a number suffix to &#39;value&#39;. (-st, -nd, -rd or -th)</p>
 </dd>
 <dt><a href="#fromDate">fromDate(date, format)</a> ⇒</dt>
 <dd><p>Converts a date object into strings of various formats.</p>
@@ -352,6 +367,18 @@ Creates an HTML element
 | --- | --- |
 | options | The options used to create the element |
 
+<a name="exists"></a>
+
+## exists(elementId) ⇒
+Checks to see if an element with the ID 'elementId' exists in the DOM.
+
+**Kind**: global function  
+**Returns**: True of an element with the ID 'elementId' exists in the DOM, false otherwise.  
+
+| Param | Description |
+| --- | --- |
+| elementId | The ID of an element to check the existance of. |
+
 <a name="clear"></a>
 
 ## clear(container)
@@ -396,6 +423,41 @@ Clears the value of the inputs within a certain section within a form.
 | Param | Description |
 | --- | --- |
 | section | The section to retrieve the form data from. |
+
+<a name="submitFormWithValidation"></a>
+
+## submitFormWithValidation(form)
+Submits a form whilst triggering HTML's default form validation.
+
+**Kind**: global function  
+
+| Param | Description |
+| --- | --- |
+| form | A form to submit. |
+
+<a name="pulse"></a>
+
+## pulse(element, color)
+Pulses a halo affect around an element to bring attention to it.
+
+**Kind**: global function  
+
+| Param | Default | Description |
+| --- | --- | --- |
+| element |  | The element to pluse |
+| color | <code>#FF0000</code> | The color of the pluse |
+
+<a name="getCssVariable"></a>
+
+## getCssVariable(name) ⇒
+Get a computed value of a css variable.
+
+**Kind**: global function  
+**Returns**: The computed style of the css variable named [name](name).  
+
+| Param | Description |
+| --- | --- |
+| name | The name of the css variable. (Starts with "--") |
 
 <a name="setSlowedInputListener"></a>
 
@@ -962,6 +1024,18 @@ Makes [singular](singular) plural.
 | --- | --- | --- |
 | singular |  | The singular word to make plural. |
 | count | <code>0</code> | The number of [singular](singular). Not 1 to pluralize. |
+
+<a name="withNumberSuffix"></a>
+
+## withNumberSuffix(value) ⇒
+Adds a number suffix to 'value'. (-st, -nd, -rd or -th)
+
+**Kind**: global function  
+**Returns**: A string of 'value' with a number suffix.  
+
+| Param | Description |
+| --- | --- |
+| value | The number to add a suffix to. |
 
 <a name="fromDate"></a>
 

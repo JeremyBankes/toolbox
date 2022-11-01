@@ -102,6 +102,24 @@ export default class Text {
     }
 
     /**
+     * Adds a number suffix to 'value'. (-st, -nd, -rd or -th)
+     * @param value The number to add a suffix to.
+     * @returns A string of 'value' with a number suffix.
+     */
+    public static withNumberSuffix(value: number): string {
+        if (value % 1 !== 0) {
+            throw new Error(`Can only determine a number suffix for integers. Got "${value}".`);
+        }
+        const string = value.toFixed(0);
+        switch (value) {
+            case 1: return string + 'st';
+            case 2: return string + 'nd';
+            case 3: return string + 'rd';
+            default: return string + 'th';
+        }
+    }
+
+    /**
      * Converts a date object into strings of various formats.
      * @param date The date to convert.
      * @param format The format to use.

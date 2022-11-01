@@ -86,6 +86,15 @@ export default class Dom {
     }
 
     /**
+     * Checks to see if an element with the ID 'elementId' exists in the DOM.
+     * @param elementId The ID of an element to check the existance of.
+     * @returns True of an element with the ID 'elementId' exists in the DOM, false otherwise.
+     */
+    public static exists(elementId: string) {
+        return document.getElementById(elementId) !== null;
+    }
+
+    /**
      * Removes all children from a node.
      * @param container The node to remove the children from.
      */
@@ -173,6 +182,50 @@ export default class Dom {
                 }
             }
         }
+    }
+
+    /**
+     * Submits a form whilst triggering HTML's default form validation.
+     * @param form A form to submit.
+     */
+    public static submitFormWithValidation(form: HTMLFormElement) {
+        const input = document.createElement('input');
+        input.style.display = 'none';
+        input.setAttribute('type', 'submit');
+        form.appendChild(input);
+        input.click();
+        input.remove();
+    }
+
+    /**
+     * Pulses a halo affect around an element to bring attention to it.
+     * @param element The element to pluse
+     * @param color The color of the pluse
+     */
+    public static pulse(element: HTMLElement, color: string = '#FF0000') {
+        let i = 0;
+        const duration = 500;
+        const steps = 20;
+        const boxShadowBefore = element.style.boxShadow;
+        const intervalId = setInterval(() => {
+            if (i > 1) {
+                element.style.boxShadow = boxShadowBefore;
+                clearInterval(intervalId);
+            } else {
+                i += (duration / 1000) / steps;
+                const expand = Math.sin(Math.PI * (4 * i + 1.5)) + 1;
+                element.style.boxShadow = `0 0 ${expand * 15}px ${color}`;
+            }
+        }, duration / steps);
+    }
+
+    /**
+     * Get a computed value of a css variable.
+     * @param name The name of the css variable. (Starts with "--")
+     * @returns The computed style of the css variable named {@link name}.
+     */
+    public static getCssVariable(name: string) {
+        return getComputedStyle(document.documentElement).getPropertyValue(name);
     }
 
     /**
