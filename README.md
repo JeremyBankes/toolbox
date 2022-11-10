@@ -208,6 +208,9 @@ schema = { name: { first: &#39;string&#39;, last: &#39;string&#39; }, age: &#39;
 <dt><a href="#toCamel">toCamel(string)</a> ⇒</dt>
 <dd><p>Converts <a href="string">string</a> to camelCase.</p>
 </dd>
+<dt><a href="#toTitle">toTitle(string)</a> ⇒</dt>
+<dd><p>Converts string to Title Case</p>
+</dd>
 <dt><a href="#toPrettyList">toPrettyList(values)</a> ⇒</dt>
 <dd><p>Creates an English readable list from <a href="values">values</a>.</p>
 </dd>
@@ -998,7 +1001,19 @@ Converts [string](string) to camelCase.
 
 | Param | Description |
 | --- | --- |
-| string | The text to turn into camel case |
+| string | The text to turn into camel case. |
+
+<a name="toTitle"></a>
+
+## toTitle(string) ⇒
+Converts string to Title Case
+
+**Kind**: global function  
+**Returns**: A Title Case String  
+
+| Param | Description |
+| --- | --- |
+| string | The text to turn into title case. |
 
 <a name="toPrettyList"></a>
 

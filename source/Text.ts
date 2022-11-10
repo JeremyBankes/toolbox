@@ -36,7 +36,7 @@ export default class Text {
 
     /**
      * Converts {@link string} to camelCase.
-     * @param string The text to turn into camel case
+     * @param string The text to turn into camel case.
      * @returns aCamelCaseString
      */
     public static toCamel(string: string) {
@@ -48,6 +48,15 @@ export default class Text {
             return piece;
         }).join('');
         return string;
+    }
+
+    /**
+     * Converts string to Title Case
+     * @param string The text to turn into title case.
+     * @returns A Title Case String
+     */
+    public static toTitle(string: string) {
+        return string.toLowerCase().replace(/(?<=^|\s)[a-z]/g, (value) => value.toUpperCase());
     }
 
     /**
