@@ -56,7 +56,7 @@ export default class Text {
      * @returns A Title Case String
      */
     public static toTitle(string: string) {
-        return string.toLowerCase().replace(/(?<=^|\s)[a-z]/g, (value) => value.toUpperCase());
+        return string.toLowerCase().replace(/(?:^|\s)[a-z]/g, (match) => match.toUpperCase());
     }
 
     /**
