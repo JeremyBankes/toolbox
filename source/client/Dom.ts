@@ -250,6 +250,15 @@ export default class Dom {
         }
     }
 
+    public static addAlwaysUppercaseModifier(input: HTMLInputElement) {
+        input.addEventListener('input', () => {
+            const selectionStart = input.selectionStart;
+            const selectionEnd = input.selectionEnd;
+            input.value = input.value.toUpperCase();
+            input.setSelectionRange(selectionStart, selectionEnd);
+        });
+    }
+
     /**
      * Creates a client-side form submission handler
      * @param form The form element to list for submissions on.
