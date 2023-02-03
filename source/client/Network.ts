@@ -37,7 +37,7 @@ export default class Network {
      * @param headers The headers to send to {@link url}
      * @returns The response from {@link url}
      */
-    public static async request(url: string, method: RequestMethod = RequestMethod.GET, body: BodyInit | object = {}, headers: HeadersInit = {}) {
+    public static async request(url: string, method: RequestMethod = RequestMethod.GET, body: BodyInit | object = undefined, headers: HeadersInit = {}) {
         if (Network.defaults.host !== null && url.match(/^[a-zA-Z]+:\/\//) === null) {
             url = Network.defaults.host + url;
         }
@@ -54,7 +54,7 @@ export default class Network {
                 ...Data.conditional(method === RequestMethod.POST, Network.defaults.postHeaders),
                 ...headers
             },
-            body: body
+            ...Data.conditional(body !== undefined, { body })
         });
     }
 
@@ -66,8 +66,11 @@ export default class Network {
      * @param headers The headers to send to {@link url}
      * @returns The response from {@link url}
      */
-    public static async get(url: string, parameters: URLSearchParams, headers: HeadersInit = {}) {
-        return await Network.request(url + '?' + parameters.toString(), RequestMethod.GET, null, headers);
+    public static async get(url: string, parameters?: URLSearchParams, headers: HeadersInit = {}) {
+        if (parameters !== undefined) {
+            url = url + '?' + parameters.toString();
+        }
+        return await Network.request(url, RequestMethod.GET, undefined, headers);
     }
 
     /**
@@ -78,7 +81,7 @@ export default class Network {
      * @param headers The headers to send to {@link url}
      * @returns The response from {@link url}
      */
-    public static async post(url: string, body: BodyInit | object, headers: HeadersInit = {}) {
+    public static async post(url: string, body: BodyInit | object = {}, headers: HeadersInit = {}) {
         return await Network.request(url, RequestMethod.POST, body, headers);
     }
 
