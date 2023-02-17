@@ -81,7 +81,7 @@ export default class Network {
      * @param headers The headers to send to {@link url}
      * @returns The response from {@link url}
      */
-    public static async post(url: string, body: BodyInit | object, headers: HeadersInit = {}) {
+    public static async post(url: string, body: BodyInit | object = {}, headers: HeadersInit = {}) {
         return await Network.request(url, RequestMethod.POST, body, headers);
     }
 
