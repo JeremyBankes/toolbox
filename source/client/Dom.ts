@@ -347,18 +347,10 @@ export default class Dom {
         update();
     }
 
-    /**
-     * Determines if the current runtime is a browser.
-     * @returns True if the current runtime is a browser, false otherwise.
-     */
-    public static isBrowser() {
-        return Data.has(globalThis, 'window');
-    }
-
     static loaded: boolean = false;
 
     static {
-        if (Dom.isBrowser()) {
+        if (window !== undefined && "addEventListener" in window && typeof window.addEventListener === "function") {
             addEventListener('DOMContentLoaded', () => {
                 if (!Dom.loaded) {
                     const mapping = Dom.getMapping();
