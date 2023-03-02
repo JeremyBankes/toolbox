@@ -350,7 +350,7 @@ export default class Dom {
     static loaded: boolean = false;
 
     static {
-        if (window !== undefined && "addEventListener" in window && typeof window.addEventListener === "function") {
+        if (globalThis.window !== undefined && "addEventListener" in globalThis.window && typeof globalThis.window.addEventListener === "function") {
             addEventListener('DOMContentLoaded', () => {
                 if (!Dom.loaded) {
                     const mapping = Dom.getMapping();
