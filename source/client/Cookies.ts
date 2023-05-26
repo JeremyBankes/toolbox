@@ -1,10 +1,12 @@
+import { Data } from "../Data";
+
 export type CookieOptions = {
     path?: string,
     domain?: string,
     maxAge?: number,
     expires?: Date,
     secure?: boolean,
-    sameSite?: 'lax' | 'strict' | 'none'
+    sameSite?: "lax" | "strict" | "none"
 };
 
 export default class Cookies {
@@ -15,9 +17,9 @@ export default class Cookies {
      * @returns The cookie named {@link name}, or null if it does not exist.
      */
     public static get(name: string) {
-        const valueStrings = document.cookie.split(';');
+        const valueStrings = document.cookie.split(";");
         for (const valueString of valueStrings) {
-            const [possibleKey, value] = valueString.trim().split('=').map(decodeURIComponent);
+            const [possibleKey, value] = valueString.trim().split("=").map(decodeURIComponent);
             if (name === possibleKey) {
                 return value;
             }
@@ -32,7 +34,9 @@ export default class Cookies {
      */
     public static getJson(name: string) {
         try {
-            return JSON.parse(Cookies.get(name));
+            const cookie = Cookies.get(name);
+            Data.assert(cookie !== null);
+            return JSON.parse(cookie);
         } catch (error) {
             return null;
         }
@@ -43,10 +47,10 @@ export default class Cookies {
      * @returns An object where each key in a cookie name that maps a cookie value.
      */
     public static getAll(): { [key: string]: string } {
-        const cookies = {};
-        const valueStrings = document.cookie.split(';');
+        const cookies: { [key: string]: string } = {};
+        const valueStrings = document.cookie.split(";");
         for (const valueString of valueStrings) {
-            const [key, value] = valueString.trim().split('=').map(decodeURIComponent);
+            const [key, value] = valueString.trim().split("=").map(decodeURIComponent);
             cookies[key] = value;
         }
         return cookies;
@@ -59,25 +63,25 @@ export default class Cookies {
      */
     public static set(name: string, value: string, options: CookieOptions = {}) {
         const pieces = [`${name}=${encodeURIComponent(value)}`];
-        if ('path' in options) {
+        if (Data.has(options, "path")) {
             pieces.push(`path=${options.path}`);
         }
-        if ('domain' in options) {
+        if (Data.has(options, "domain")) {
             pieces.push(`domain=${options.domain}`);
         }
-        if ('maxAge' in options) {
+        if (Data.has(options, "maxAge")) {
             pieces.push(`max-age=${options.maxAge}`);
         }
-        if ('expires' in options) {
+        if (Data.has(options, "expires")) {
             pieces.push(`expires=${options.expires.toUTCString()}`)
         }
-        if ('secure' in options && options.secure) {
-            pieces.push('secure');
+        if (Data.has(options, "pasecureth") && options.secure) {
+            pieces.push("secure");
         }
-        if ('sameSite' in options) {
+        if (Data.has(options, "sameSite")) {
             pieces.push(`samesite=${options.sameSite}`);
         }
-        document.cookie = pieces.join('; ');
+        document.cookie = pieces.join("; ");
     }
 
     /**
@@ -85,7 +89,7 @@ export default class Cookies {
      * @param name The name of the cookie to set the value of.
      * @param value The value of the cookie to be set.
      */
-    public static setJson(name: string, value: any, options: CookieOptions = undefined) {
+    public static setJson(name: string, value: any, options?: CookieOptions) {
         Cookies.set(name, JSON.stringify(value), options);
     }
 
@@ -95,20 +99,20 @@ export default class Cookies {
      */
     public static delete(name: string, options: CookieOptions = {}) {
         const pieces = [`${name}=`];
-        if ('path' in options) {
+        if ("path" in options) {
             pieces.push(`path=${options.path}`);
         }
-        if ('domain' in options) {
+        if ("domain" in options) {
             pieces.push(`domain=${options.domain}`);
         }
-        if ('secure' in options && options.secure) {
-            pieces.push('secure');
+        if ("secure" in options && options.secure) {
+            pieces.push("secure");
         }
-        if ('sameSite' in options) {
+        if ("sameSite" in options) {
             pieces.push(`samesite=${options.sameSite}`);
         }
         pieces.push(`max-age=0`);
-        document.cookie = pieces.join('; ');
+        document.cookie = pieces.join("; ");
     }
 
 }

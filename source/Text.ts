@@ -5,21 +5,21 @@ type TextDefaults = {
     currency: string // https://www.six-group.com/dam/download/financial-information/data-center/iso-currrency/lists/list_one.xml
 };
 
-type Precision = 'week' | 'day' | 'hour' | 'minute' | 'second' | 'millisecond';
+type Precision = "week" | "day" | "hour" | "minute" | "second" | "millisecond";
 
 /**
  * A String manipulation module used for formatting and interpreting text. 
  */
-export default class Text {
+export namespace Text {
 
     /** 
      * The default options for text manipulations and formatting
      */
-    public static defaults: TextDefaults = {
-        locale: 'en-CA',
-        dateFormat: { dateStyle: 'long' },
-        timeFormat: { timeStyle: 'short' },
-        currency: 'CAD'
+    export const defaults: TextDefaults = {
+        locale: "en-CA",
+        dateFormat: { dateStyle: "long" },
+        timeFormat: { timeStyle: "short" },
+        currency: "CAD"
     }
 
     /**
@@ -27,10 +27,10 @@ export default class Text {
      * @param string The text to turn into a slug
      * @returns a-slug-string
      */
-    public static toSlug(string: string) {
-        string = string.replace(/[^a-z0-9]+/gi, '-');
-        string = string.replace(/([a-z])([A-Z])/g, '$1-$2');
-        string = string.replace(/^-|-$/g, '');
+    export function toSlug(string: string) {
+        string = string.replace(/[^a-z0-9]+/gi, "-");
+        string = string.replace(/([a-z])([A-Z])/g, "$1-$2");
+        string = string.replace(/^-|-$/g, "");
         return string.toLowerCase();
     }
 
@@ -39,14 +39,14 @@ export default class Text {
      * @param string The text to turn into camel case.
      * @returns aCamelCaseString
      */
-    public static toCamel(string: string) {
-        string = string.replace(/[^A-Za-z0-9]+/g, ' ').trim().toLowerCase();
+    export function toCamel(string: string) {
+        string = string.replace(/[^A-Za-z0-9]+/g, " ").trim().toLowerCase();
         string = string.split(/ /g).map((piece, index) => {
             if (index > 0) {
                 return piece.charAt(0).toUpperCase() + piece.substring(1);
             }
             return piece;
-        }).join('');
+        }).join("");
         return string;
     }
 
@@ -55,16 +55,16 @@ export default class Text {
      * @param string The text to turn into title case.
      * @returns A Title Case String
      */
-    public static toTitle(string: string) {
+    export function toTitle(string: string) {
         return string.toLowerCase().replace(/(?:^|\s)[a-z]/g, (match) => match.toUpperCase());
     }
 
     /**
      * Creates an English readable list from {@link values}.
      * @param values A list of values to make a pretty list out of.
-     * @returns A list deliminated by commas with the word 'and' seperating the last element.
+     * @returns A list deliminated by commas with the word "and" seperating the last element.
      */
-    public static toPrettyList(values: string[], lastDelimiter: string = ' and ', delimiter: string = ', ') {
+    export function toPrettyList(values: string[], lastDelimiter: string = " and ", delimiter: string = ", ") {
         if (values.length > 1) {
             const lastValue = values.pop();
             return values.join(delimiter) + lastDelimiter + lastValue;
@@ -79,52 +79,52 @@ export default class Text {
      * @param count The number of {@link singular}. Not 1 to pluralize.
      * @returns The plural of {@link singular}.
      */
-    public static pluralize(singular: string, count: number = 0) {
+    export function pluralize(singular: string, count: number = 0) {
         if (count == 1) {
             return singular;
         }
         const plural = {
-            '(quiz)$': "$1zes", '^(ox)$': "$1en", '([m|l])ouse$': "$1ice", '(matr|vert|ind)ix|ex$': "$1ices", '(x|ch|ss|sh)$': "$1es",
-            '([^aeiouy]|qu)y$': "$1ies", '(hive)$': "$1s", '(?:([^f])fe|([lr])f)$': "$1$2ves", '(shea|lea|loa|thie)f$': "$1ves", 'sis$': "ses",
-            '([ti])um$': "$1a", '(tomat|potat|ech|her|vet)o$': "$1oes", '(bu)s$': "$1ses", '(alias)$': "$1es", '(octop)us$': "$1i", '(ax|test)is$': "$1es",
-            '(us)$': "$1es", '([^s]+)$': "$1s"
+            "(quiz)$": "$1zes", "^(ox)$": "$1en", "([m|l])ouse$": "$1ice", "(matr|vert|ind)ix|ex$": "$1ices", "(x|ch|ss|sh)$": "$1es",
+            "([^aeiouy]|qu)y$": "$1ies", "(hive)$": "$1s", "(?:([^f])fe|([lr])f)$": "$1$2ves", "(shea|lea|loa|thie)f$": "$1ves", "sis$": "ses",
+            "([ti])um$": "$1a", "(tomat|potat|ech|her|vet)o$": "$1oes", "(bu)s$": "$1ses", "(alias)$": "$1es", "(octop)us$": "$1i", "(ax|test)is$": "$1es",
+            "(us)$": "$1es", "([^s]+)$": "$1s"
         };
-        const irregular = { 'move': 'moves', 'foot': 'feet', 'goose': 'geese', 'sex': 'sexes', 'child': 'children', 'man': 'men', 'tooth': 'teeth', 'person': 'people' };
-        const uncountable = ['sheep', 'fish', 'deer', 'moose', 'series', 'species', 'money', 'rice', 'information', 'equipment'];
+        const irregular = { "move": "moves", "foot": "feet", "goose": "geese", "sex": "sexes", "child": "children", "man": "men", "tooth": "teeth", "person": "people" };
+        const uncountable = ["sheep", "fish", "deer", "moose", "series", "species", "money", "rice", "information", "equipment"];
         if (uncountable.indexOf(singular.toLowerCase()) >= 0) {
             return singular;
         }
         for (const word in irregular) {
-            const pattern = new RegExp(word + '$', 'i');
-            const replace = irregular[word];
+            const pattern = new RegExp(word + "$", "i");
+            const replace = irregular[word as never];
             if (pattern.test(singular)) {
                 return singular.replace(pattern, replace);
             }
         }
         for (const expression in plural) {
-            const pattern = new RegExp(expression, 'i');
+            const pattern = new RegExp(expression, "i");
             if (pattern.test(singular)) {
-                return singular.replace(pattern, plural[expression]);
+                return singular.replace(pattern, plural[expression as never]);
             }
         }
         return singular;
     }
 
     /**
-     * Adds a number suffix to 'value'. (-st, -nd, -rd or -th)
+     * Adds a number suffix to "value". (-st, -nd, -rd or -th)
      * @param value The number to add a suffix to.
-     * @returns A string of 'value' with a number suffix.
+     * @returns A string of "value" with a number suffix.
      */
-    public static withNumberSuffix(value: number): string {
+    export function withNumberSuffix(value: number): string {
         if (value % 1 !== 0) {
             throw new Error(`Can only determine a number suffix for integers. Got "${value}".`);
         }
         const string = value.toFixed(0);
         switch (value) {
-            case 1: return string + 'st';
-            case 2: return string + 'nd';
-            case 3: return string + 'rd';
-            default: return string + 'th';
+            case 1: return string + "st";
+            case 2: return string + "nd";
+            case 3: return string + "rd";
+            default: return string + "th";
         }
     }
 
@@ -134,11 +134,11 @@ export default class Text {
      * @param format The format to use.
      * @returns A formatted date string.
      */
-    public static fromDate(date: Date, format: 'iso' | 'form' | 'pretty' = 'pretty') {
+    export function fromDate(date: Date, format: "iso" | "form" | "pretty" = "pretty") {
         switch (format) {
-            case 'iso': return date.toISOString();
-            case 'form': return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().substring(0, 10);
-            case 'pretty': return date.toLocaleDateString(Text.defaults.locale, Text.defaults.dateFormat);
+            case "iso": return date.toISOString();
+            case "form": return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().substring(0, 10);
+            case "pretty": return date.toLocaleDateString(Text.defaults.locale, Text.defaults.dateFormat);
             default: throw new Error(`Unrecognized date format ${format}.`);
         }
     }
@@ -146,10 +146,10 @@ export default class Text {
     /**
     * Converts a string into a date object.
     * @param dateString The string to parse into a date.
-    * @param formFormat If true, parses 'dateString' in the current timezone instead of UTC.
+    * @param formFormat If true, parses "dateString" in the current timezone instead of UTC.
     * @returns The parsed date.
     */
-    public static toDate(dateString: string, formFormat: boolean) {
+    export function toDate(dateString: string, formFormat: boolean) {
         const date = new Date(dateString);
         if (formFormat) {
             return new Date(date.getTime() + date.getTimezoneOffset() * 60000);
@@ -164,21 +164,21 @@ export default class Text {
      * @param format The format of the time string.
      * @returns The formatted time string.
      */
-    public static fromTime(hoursOfDayOrDate: Date | number, format: 'form' | 'pretty' = 'pretty') {
+    export function fromTime(hoursOfDayOrDate: Date | number, format: "form" | "pretty" = "pretty") {
         switch (format) {
-            case 'form':
+            case "form":
                 let hours: number;
                 let minutes: number;
-                if (typeof hoursOfDayOrDate === 'number') {
+                if (typeof hoursOfDayOrDate === "number") {
                     hours = Math.floor(hoursOfDayOrDate);
                     minutes = Math.round((hoursOfDayOrDate - hours) * 60);
                 } else {
                     hours = hoursOfDayOrDate.getHours();
                     minutes = hoursOfDayOrDate.getMinutes();
                 }
-                return hours.toString().padStart(2, '0') + ':' + minutes.toString().padStart(2, '0');
-            case 'pretty':
-                if (typeof hoursOfDayOrDate === 'number') {
+                return hours.toString().padStart(2, "0") + ":" + minutes.toString().padStart(2, "0");
+            case "pretty":
+                if (typeof hoursOfDayOrDate === "number") {
                     const hours = Math.floor(hoursOfDayOrDate);
                     const minutes = Math.round((hoursOfDayOrDate - hours) * 60);
                     hoursOfDayOrDate = new Date(0, 0, 0, hours, minutes);
@@ -192,7 +192,7 @@ export default class Text {
      * @param formTimeString The string to parse.
      * @returns An hour of the day (0-24) representing {@link formTimeString}.
      */
-    public static toTime(formTimeString: string) {
+    export function toTime(formTimeString: string) {
         const hours = parseInt(formTimeString.substring(0, 2));
         const minutes = parseInt(formTimeString.substring(3, 5));
         return hours + minutes / 60;
@@ -206,14 +206,14 @@ export default class Text {
      * @param pluralize True to pluralize the units, false otherwise.
      * @returns A duration string.
      */
-    public static toDurationString(milliseconds: number, maximumPrecision: Precision = 'day', minimumPrecision: Precision = 'second', pluralize: boolean = false) {
+    export function toDurationString(milliseconds: number, maximumPrecision: Precision = "day", minimumPrecision: Precision = "second", pluralize: boolean = false) {
         const precisions = [
-            { name: 'week', milliseconds: 1000 * 60 * 60 * 24 * 7 },
-            { name: 'day', milliseconds: 1000 * 60 * 60 * 24 },
-            { name: 'hour', milliseconds: 1000 * 60 * 60 },
-            { name: 'minute', milliseconds: 1000 * 60 },
-            { name: 'second', milliseconds: 1000 },
-            { name: 'millisecond', milliseconds: 1 }
+            { name: "week", milliseconds: 1000 * 60 * 60 * 24 * 7 },
+            { name: "day", milliseconds: 1000 * 60 * 60 * 24 },
+            { name: "hour", milliseconds: 1000 * 60 * 60 },
+            { name: "minute", milliseconds: 1000 * 60 },
+            { name: "second", milliseconds: 1000 },
+            { name: "millisecond", milliseconds: 1 }
         ];
         const pieces = [];
         const maximumPrecisionIndex = precisions.findIndex(item => item.name === maximumPrecision);
@@ -223,10 +223,10 @@ export default class Text {
             let count = i === last ? Math.round(milliseconds / item.milliseconds) : Math.floor(milliseconds / item.milliseconds);
             milliseconds -= count * item.milliseconds;
             if (count !== 0) {
-                pieces.push(count + ' ' + (pluralize ? Text.pluralize(item.name, count) : item.name));
+                pieces.push(count + " " + (pluralize ? Text.pluralize(item.name, count) : item.name));
             }
         }
-        return pieces.join(', ');
+        return pieces.join(", ");
     }
 
     /**
@@ -234,8 +234,8 @@ export default class Text {
      * @param date The date to get the weekday from.
      * @returns The name of the day of the week.
      */
-    public static getWeekdayName(date: Date) {
-        return date.toLocaleDateString(Text.defaults.locale, { weekday: 'long' });
+    export function getWeekdayName(date: Date) {
+        return date.toLocaleDateString(Text.defaults.locale, { weekday: "long" });
     }
 
     /**
@@ -243,8 +243,8 @@ export default class Text {
      * @param date The date to get the month from.
      * @returns The name of the month of the year.
      */
-    public static getMonthName(date: Date) {
-        return date.toLocaleDateString(Text.defaults.locale, { month: 'long' });
+    export function getMonthName(date: Date) {
+        return date.toLocaleDateString(Text.defaults.locale, { month: "long" });
     }
 
     /**
@@ -252,8 +252,8 @@ export default class Text {
      * @param currency The currency to convert to a string.
      * @returns A string representing {@link currency}.
      */
-    public static fromCurrency(currency: number) {
-        return currency.toLocaleString(Text.defaults.locale, { style: 'currency', currency: Text.defaults.currency });
+    export function fromCurrency(currency: number) {
+        return currency.toLocaleString(Text.defaults.locale, { style: "currency", currency: Text.defaults.currency });
     }
 
     /**
@@ -261,8 +261,8 @@ export default class Text {
      * @param percentage The percentage to convert to a string.
      * @returns A string representing {@link percentage}.
      */
-    public static fromPercentage(percentage: number) {
-        return percentage.toLocaleString(Text.defaults.locale, { style: 'percent' });
+    export function fromPercentage(percentage: number) {
+        return percentage.toLocaleString(Text.defaults.locale, { style: "percent" });
     }
 
     /**
@@ -271,8 +271,8 @@ export default class Text {
      * @param fractionalDigits The number of digits to represent the fractional portion of the number.
      * @returns A string representing {@link number}.
      */
-    public static fromNumber(number: number, fractionalDigits: number = 2) {
-        return number.toLocaleString(Text.defaults.locale, { style: 'decimal', minimumFractionDigits: fractionalDigits, maximumFractionDigits: fractionalDigits });
+    export function fromNumber(number: number, fractionalDigits: number = 2) {
+        return number.toLocaleString(Text.defaults.locale, { style: "decimal", minimumFractionDigits: fractionalDigits, maximumFractionDigits: fractionalDigits });
     }
 
     /**
@@ -281,7 +281,7 @@ export default class Text {
      * @param stringB The second string
      * @returns The distance between {@link stringA} and {@link stringB}
      */
-    public static getLevenshteinDistance(stringA: string, stringB: string) {
+    export function getLevenshteinDistance(stringA: string, stringB: string) {
         const line = Array(stringB.length + 1).fill(null).map(() => Array(stringA.length + 1).fill(null));
         for (let i = 0; i <= stringA.length; i += 1) {
             line[0][i] = i;
@@ -304,7 +304,7 @@ export default class Text {
      * @param stringB The second string
      * @returns A similarity factor, 1 being identical, 0 being very different.
      */
-    public static getSimilarityFactor(stringA: string, stringB: string) {
+    export function getSimilarityFactor(stringA: string, stringB: string) {
         const distance = Text.getLevenshteinDistance(stringA, stringB);
         const averageLength = (stringA.length + stringB.length) / 2;
         return Math.max(0, 1 - distance / Math.max(1, averageLength));

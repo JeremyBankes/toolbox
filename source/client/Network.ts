@@ -1,13 +1,13 @@
-import Data from '../Data.js';
+import { Data } from "../Data";
 
 enum RequestMethod {
-    GET = 'GET', HEAD = 'HEAD', OPTIONS = 'OPTIONS', PATCH = 'PATCH',
-    POST = 'POST', PUT = 'PUT', DELETE = 'DELETE', TRACE = 'TRACE'
+    GET = "GET", HEAD = "HEAD", OPTIONS = "OPTIONS", PATCH = "PATCH",
+    POST = "POST", PUT = "PUT", DELETE = "DELETE", TRACE = "TRACE"
 }
 
 type NetworkDefaults = {
     /** The host to use for outgoing requests instead of the current origin. */
-    host: string,
+    host?: string,
     /** Headers to use for all outgoing requests */
     headers: HeadersInit,
     /** Headers to use for outgoing GET requests */
@@ -22,8 +22,6 @@ export default class Network {
      * Used specify default to use for all outgoing requests.
      */
     public static defaults: NetworkDefaults = {
-        /* Cows are cool */
-        host: null,
         headers: {},
         getHeaders: {},
         postHeaders: {},
@@ -37,21 +35,23 @@ export default class Network {
      * @param headers The headers to send to {@link url}
      * @returns The response from {@link url}
      */
-    public static async request(url: string, method: RequestMethod = RequestMethod.GET, body: BodyInit | object = undefined, headers: HeadersInit = {}) {
+    public static async request(url: string, method: RequestMethod = RequestMethod.GET, body?: BodyInit | object, headers: HeadersInit = {}) {
         if (Network.defaults.host !== null && url.match(/^[a-zA-Z]+:\/\//) === null) {
             url = Network.defaults.host + url;
         }
-        if (typeof body === 'object') {
-            body = body === null ? '' : JSON.stringify(body);
-            headers['content-type'] = 'application/json';
+        const additionalHeaders: Record<string, string> = {};
+        if (typeof body === "object") {
+            body = body === null ? "" : JSON.stringify(body);
+            additionalHeaders["Content-Type"] = "application/json";
         }
         return await fetch(url, {
             method: method,
-            credentials: 'include',
+            credentials: "include",
             headers: {
                 ...Network.defaults.headers,
                 ...Data.conditional(method === RequestMethod.GET, Network.defaults.getHeaders),
                 ...Data.conditional(method === RequestMethod.POST, Network.defaults.postHeaders),
+                ...additionalHeaders,
                 ...headers
             },
             ...Data.conditional(body !== undefined, { body })
@@ -68,7 +68,7 @@ export default class Network {
      */
     public static async get(url: string, parameters?: URLSearchParams, headers: HeadersInit = {}) {
         if (parameters !== undefined) {
-            url = url + '?' + parameters.toString();
+            url = url + "?" + parameters.toString();
         }
         return await Network.request(url, RequestMethod.GET, undefined, headers);
     }

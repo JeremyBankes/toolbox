@@ -1,4 +1,5 @@
-import Data from '../Data.js';
+import { setDefaultHighWaterMark } from "stream";
+import { Data } from "../Data";
 
 type OnDomReadyCallback = (mapping: ElementMapping) => void | Promise<void>;
 type OnDomErrorCallback = (error: Error, mapping: ElementMapping) => void;
@@ -14,8 +15,8 @@ type HTMLElementCreationOptions = {
     textContent?: string,
     innerHTML?: string,
     outerHTML?: string,
-    attributes?: { [key: string]: string },
-    eventListeners?: { [key: string]: EventListenerOrEventListenerObject },
+    attributes?: { [ElementId: string]: string },
+    eventListeners?: { [ElementId: string]: EventListenerOrEventListenerObject },
     childNodes?: Node[]
 };
 
@@ -61,34 +62,34 @@ export default class Dom {
      */
     public static create(options: HTMLElementCreationOptions) {
         const element = document.createElement(options.tagName);
-        element.classList.add(...Data.get(options, 'classList', []));
-        element.textContent = Data.get(options, 'textContent', '');
-        if (Data.has(options, 'innerHTML')) {
-            element.innerHTML = Data.get(options, 'innerHTML', null);
+        element.classList.add(...Data.get(options, "classList", []));
+        element.textContent = Data.get(options, "textContent", "");
+        if (Data.has(options, "innerHTML")) {
+            element.innerHTML = Data.get(options, "innerHTML", null);
         }
-        if (Data.has(options, 'outerHTML')) {
-            element.outerHTML = Data.get(options, 'outerHTML', null);
+        if (Data.has(options, "outerHTML")) {
+            element.outerHTML = Data.get(options, "outerHTML", null);
         }
-        if (Data.has(options, 'attributes')) {
+        if (Data.has(options, "attributes")) {
             for (const name in options.attributes) {
                 element.setAttribute(name, options.attributes[name]);
             }
         }
-        if (Data.has(options, 'eventListeners')) {
+        if (Data.has(options, "eventListeners")) {
             for (const type in options.eventListeners) {
                 element.addEventListener(type, options.eventListeners[type]);
             }
         }
-        if (Data.has(options, 'childNodes')) {
-            element.append(...Data.get(options, 'childNodes', []));
+        if (Data.has(options, "childNodes")) {
+            element.append(...Data.get(options, "childNodes", []));
         }
         return element;
     }
 
     /**
-     * Checks to see if an element with the ID 'elementId' exists in the DOM.
+     * Checks to see if an element with the ID "elementId" exists in the DOM.
      * @param elementId The ID of an element to check the existance of.
-     * @returns True of an element with the ID 'elementId' exists in the DOM, false otherwise.
+     * @returns True of an element with the ID "elementId" exists in the DOM, false otherwise.
      */
     public static exists(elementId: string) {
         return document.getElementById(elementId) !== null;
@@ -110,9 +111,9 @@ export default class Dom {
      * @param section The section to retrieve the form data from. This can be the form itself.
      */
     public static getFormData(section: HTMLElement) {
-        const form = section.closest('form');
+        const form = section.closest("form");
         if (form === null) {
-            throw new Error('Section not in form.');
+            throw new Error("Section not in form.");
         }
         const formData = new FormData(form);
         for (const element of form.elements) {
@@ -137,7 +138,7 @@ export default class Dom {
         } else {
             formData = new FormData();
             Data.walk(data, (_, property, path) => {
-                if (typeof property !== 'object') {
+                if (typeof property !== "object") {
                     formData.append(path, property);
                 }
                 return false;
@@ -145,14 +146,22 @@ export default class Dom {
         }
         for (const [key, value] of formData) {
             if (key in form.elements) {
-                const input = form.elements[key];
-                switch (input.type) {
-                    case 'checkbox':
-                        input.checked = !!value;
-                        break;
-                    default:
-                        input.value = value;
-                        break;
+                const input = form.elements[key as never];
+                if (input instanceof HTMLInputElement) {
+                    switch (input.type) {
+                        case "checkbox":
+                            input.checked = !!value;
+                            break;
+                        default:
+                            if (value instanceof File) {
+                                const dataTransfer = new DataTransfer();
+                                dataTransfer.items.add(value);
+                                input.files = dataTransfer.files;
+                            } else {
+                                input.value = value;
+                            }
+                            break;
+                    }
                 }
             }
         }
@@ -163,20 +172,20 @@ export default class Dom {
      * @param section The section to retrieve the form data from.
      */
     public static clearFormSection(section: HTMLElement) {
-        const form = section.closest('form');
+        const form = section.closest("form");
         if (form === null) {
-            throw new Error('Section not in form.');
+            throw new Error("Section not in form.");
         }
         for (const element of form.elements) {
             if (section.contains(element)) {
                 if (element instanceof HTMLInputElement) {
-                    if (element.type === 'checkbox' || element.type === 'radio') {
+                    if (element.type === "checkbox" || element.type === "radio") {
                         element.checked = false;
                     } else {
-                        element.value = '';
+                        element.value = "";
                     }
                 } else if (element instanceof HTMLTextAreaElement) {
-                    element.value = '';
+                    element.value = "";
                 } else if (element instanceof HTMLSelectElement) {
                     element.selectedIndex = 0;
                 }
@@ -189,9 +198,9 @@ export default class Dom {
      * @param form A form to submit.
      */
     public static submitFormWithValidation(form: HTMLFormElement) {
-        const input = document.createElement('input');
-        input.style.display = 'none';
-        input.setAttribute('type', 'submit');
+        const input = document.createElement("input");
+        input.style.display = "none";
+        input.setAttribute("type", "submit");
         form.appendChild(input);
         input.click();
         input.remove();
@@ -202,7 +211,7 @@ export default class Dom {
      * @param element The element to pluse
      * @param color The color of the pluse
      */
-    public static pulse(element: HTMLElement, color: string = '#FF0000') {
+    public static pulse(element: HTMLElement, color: string = "#FF0000") {
         let i = 0;
         const duration = 500;
         const steps = 20;
@@ -237,9 +246,9 @@ export default class Dom {
      */
     public static setSlowedInputListener(input: HTMLInputElement, callback: SlowedInputCallback, delay: number = 500) {
         if (callback) {
-            let timeout = null;
+            let timeout: NodeJS.Timeout;
             input.oninput = event => {
-                if (timeout) {
+                if (timeout === undefined) {
                     clearTimeout(timeout);
                 }
                 timeout = setTimeout(() => callback(event, true), delay);
@@ -251,7 +260,7 @@ export default class Dom {
     }
 
     public static addAlwaysUppercaseModifier(input: HTMLInputElement) {
-        input.addEventListener('input', () => {
+        input.addEventListener("input", () => {
             const selectionStart = input.selectionStart;
             const selectionEnd = input.selectionEnd;
             input.value = input.value.toUpperCase();
@@ -259,80 +268,73 @@ export default class Dom {
         });
     }
 
-    /**
-     * Creates a client-side form submission handler
-     * @param form The form element to list for submissions on.
-     * @param submissionCallback The callback to execute on the submission of {@link form}.
-     * @param errorCallback The callback to execute on an error during the execution of {@link submissionCallback}.
-     * @param finallyCallback The callback to execute after the execution of {@link submissionCallback} and {@link errorCallback}.
-     */
-    public static setFormSubmitListener(form: HTMLFormElement, submissionCallback: FormSubmissionCallback, errorCallback: FormErrorCallback = null, finallyCallback: FormFinallyCallback = null) {
-        form.onsubmit = (event) => {
-            if (event instanceof SubmitEvent) {
-                const form = event.target;
-                if (form instanceof HTMLFormElement) {
-                    const inputs = form.querySelectorAll('input[name]:not(:disabled),textarea[name]:not(:disabled),select[name]:not(:disabled),button[name]:not(:disabled)');
-                    const data = {};
-                    for (const input of inputs) {
-                        if (
-                            input instanceof HTMLInputElement
-                            || input instanceof HTMLTextAreaElement
-                            || input instanceof HTMLSelectElement
-                            || input instanceof HTMLButtonElement
-                        ) {
-                            let value = null;
-                            switch (input.type) {
-                                case 'checkbox':
-                                    if (input instanceof HTMLInputElement) {
-                                        if (input.hasAttribute('value')) {
-                                            if (input.checked) {
-                                                value = input.value;
-                                            }
-                                        } else {
-                                            value = input.checked;
-                                        }
-                                    }
-                                    break;
-                                case 'number':
-                                    value = parseFloat(input.value);
-                                    break;
-                                default:
-                                    value = input.value;
-                                    break;
-                            }
-                            if (value !== null) {
-                                Data.set(data, input.name, value);
-                            }
-                        }
-                    }
-                    form.classList.add('loading');
-                    Promise.resolve(submissionCallback(data)).then(result => {
-                        if (result) {
-                            form.reset();
-                        }
-                    }).catch((error) => {
-                        console.warn(error);
-                        if (errorCallback !== null) {
-                            errorCallback(error);
-                        }
-                    }).finally(() => {
-                        if (finallyCallback !== null) {
-                            finallyCallback();
-                        }
-                        form.classList.remove('loading');
-                    });
-                }
-            }
-            return false;
-        };
+    public static setFormSubmitListener() {
+        // form.onsubmit = (event) => {
+        //     if (event instanceof SubmitEvent) {
+        //         const form = event.target;
+        //         if (form instanceof HTMLFormElement) {
+        //             const inputs = form.querySelectorAll("input[name]:not(:disabled),textarea[name]:not(:disabled),select[name]:not(:disabled),button[name]:not(:disabled)");
+        //             const data = {};
+        //             for (const input of inputs) {
+        //                 if (
+        //                     input instanceof HTMLInputElement
+        //                     || input instanceof HTMLTextAreaElement
+        //                     || input instanceof HTMLSelectElement
+        //                     || input instanceof HTMLButtonElement
+        //                 ) {
+        //                     let value = null;
+        //                     switch (input.type) {
+        //                         case "checkbox":
+        //                             if (input instanceof HTMLInputElement) {
+        //                                 if (input.hasAttribute("value")) {
+        //                                     if (input.checked) {
+        //                                         value = input.value;
+        //                                     }
+        //                                 } else {
+        //                                     value = input.checked;
+        //                                 }
+        //                             }
+        //                             break;
+        //                         case "number":
+        //                             value = parseFloat(input.value);
+        //                             break;
+        //                         default:
+        //                             value = input.value;
+        //                             break;
+        //                     }
+        //                     if (value !== null) {
+        //                         Data.set(data, input.name, value);
+        //                     }
+        //                 }
+        //             }
+        //             form.classList.add("loading");
+        //             Promise.resolve(submissionCallback(data)).then(result => {
+        //                 if (result) {
+        //                     form.reset();
+        //                 }
+        //             }).catch((error) => {
+        //                 console.warn(error);
+        //                 if (errorCallback !== null) {
+        //                     errorCallback(error);
+        //                 }
+        //             }).finally(() => {
+        //                 if (finallyCallback !== null) {
+        //                     finallyCallback();
+        //                 }
+        //                 form.classList.remove("loading");
+        //             });
+        //         }
+        //     }
+        //     return false;
+        // };
         return {};
     }
 
     /**
-     * Controls the existance of 'templateElement's content in the DOM based on the value of 'controlInput'
-     * @param templateElement The element whoes existance is dictated by 'controlInput'
-     * @param controlInput The element whoes value controls the existance of 'templateElement'
-     * @param valueEvaluationCallback The callback to assess 'controlInput's value. Returns true for templateElement to exists, false otherwise
+     * Controls the existance of "templateElement"s content in the DOM based on the value of "controlInput"
+     * @param templateElement The element whoes existance is dictated by "controlInput"
+     * @param controlInput The element whoes value controls the existance of "templateElement"
+     * @param valueEvaluationCallback The callback to assess "controlInput"s value. Returns true for templateElement to exists, false otherwise
      */
     public static existanceControlledBy(templateElement: HTMLTemplateElement, controlInput: HTMLInputElement, valueEvaluationCallback: ValueEvaluationCallback = (controlInput) => controlInput.checked) {
         const puppetElements = [...templateElement.content.childNodes];
@@ -351,7 +353,7 @@ export default class Dom {
 
     static {
         if (globalThis.window !== undefined && "addEventListener" in globalThis.window && typeof globalThis.window.addEventListener === "function") {
-            addEventListener('DOMContentLoaded', () => {
+            addEventListener("DOMContentLoaded", () => {
                 if (!Dom.loaded) {
                     const mapping = Dom.getMapping();
                     Promise.all(Dom._onReadyListeners.map(readyListener => {
@@ -369,63 +371,64 @@ export default class Dom {
 
 }
 
+type ElementMapProxy<Element extends HTMLElement> = { [ElementId: string]: Element };
 /**
  * Holds a mapping of IDs to their corresponding elements
- * An easy-to-use typed, wrapping of documnet.getElementById()
+ * An easy-to-use typed, wrapping of document.getElementById()
  */
 export class ElementMapping {
 
-    private _rootView: {};
+    private _proxy: {};
 
     public constructor(root: Document | DocumentFragment = document) {
-        this._rootView = new Proxy({}, {
-            get(_, key: string) {
-                return root.getElementById(key);
+        this._proxy = new Proxy(root, {
+            get(root, elementId: string) {
+                return root.getElementById(elementId);
             }
         });
     }
 
-    get elements() { return this._rootView as { [key: string]: HTMLElement }; }
-    get anchors() { return this._rootView as { [key: string]: HTMLAnchorElement }; }
-    get bases() { return this._rootView as { [key: string]: HTMLBaseElement }; }
-    get bodies() { return this._rootView as { [key: string]: HTMLBodyElement }; }
-    get brs() { return this._rootView as { [key: string]: HTMLBRElement }; }
-    get buttons() { return this._rootView as { [key: string]: HTMLButtonElement }; }
-    get canvases() { return this._rootView as { [key: string]: HTMLCanvasElement }; }
-    get divs() { return this._rootView as { [key: string]: HTMLDivElement }; }
-    get dlists() { return this._rootView as { [key: string]: HTMLDListElement }; }
-    get embeds() { return this._rootView as { [key: string]: HTMLEmbedElement }; }
-    get forms() { return this._rootView as { [key: string]: HTMLFormElement }; }
-    get heads() { return this._rootView as { [key: string]: HTMLHeadElement }; }
-    get headings() { return this._rootView as { [key: string]: HTMLHeadingElement }; }
-    get hrs() { return this._rootView as { [key: string]: HTMLHRElement }; }
-    get htmls() { return this._rootView as { [key: string]: HTMLHtmlElement }; }
-    get iframes() { return this._rootView as { [key: string]: HTMLIFrameElement }; }
-    get images() { return this._rootView as { [key: string]: HTMLImageElement }; }
-    get inputs() { return this._rootView as { [key: string]: HTMLInputElement }; }
-    get lis() { return this._rootView as { [key: string]: HTMLLIElement }; }
-    get links() { return this._rootView as { [key: string]: HTMLLinkElement }; }
-    get menus() { return this._rootView as { [key: string]: HTMLMenuElement }; }
-    get metas() { return this._rootView as { [key: string]: HTMLMetaElement }; }
-    get mods() { return this._rootView as { [key: string]: HTMLModElement }; }
-    get olists() { return this._rootView as { [key: string]: HTMLOListElement }; }
-    get optgroups() { return this._rootView as { [key: string]: HTMLOptGroupElement }; }
-    get options() { return this._rootView as { [key: string]: HTMLOptionElement }; }
-    get paragraphs() { return this._rootView as { [key: string]: HTMLParagraphElement }; }
-    get pres() { return this._rootView as { [key: string]: HTMLPreElement }; }
-    get quotes() { return this._rootView as { [key: string]: HTMLQuoteElement }; }
-    get scripts() { return this._rootView as { [key: string]: HTMLScriptElement }; }
-    get selects() { return this._rootView as { [key: string]: HTMLSelectElement }; }
-    get slots() { return this._rootView as { [key: string]: HTMLSlotElement }; }
-    get spans() { return this._rootView as { [key: string]: HTMLSpanElement }; }
-    get styles() { return this._rootView as { [key: string]: HTMLStyleElement }; }
-    get tablecells() { return this._rootView as { [key: string]: HTMLTableCellElement }; }
-    get tables() { return this._rootView as { [key: string]: HTMLTableElement }; }
-    get tablerows() { return this._rootView as { [key: string]: HTMLTableRowElement }; }
-    get tablesections() { return this._rootView as { [key: string]: HTMLTableSectionElement }; }
-    get templates() { return this._rootView as { [key: string]: HTMLTemplateElement }; }
-    get times() { return this._rootView as { [key: string]: HTMLTimeElement }; }
-    get titles() { return this._rootView as { [key: string]: HTMLTitleElement }; }
-    get ulists() { return this._rootView as { [key: string]: HTMLUListElement }; }
+    public get element() { return this._proxy as ElementMapProxy<HTMLElement> }
+    public get anchor() { return this._proxy as ElementMapProxy<HTMLAnchorElement> }
+    public get base() { return this._proxy as ElementMapProxy<HTMLBaseElement> }
+    public get body() { return this._proxy as ElementMapProxy<HTMLBodyElement> }
+    public get break() { return this._proxy as ElementMapProxy<HTMLBRElement> }
+    public get button() { return this._proxy as ElementMapProxy<HTMLButtonElement> }
+    public get canvas() { return this._proxy as ElementMapProxy<HTMLCanvasElement> }
+    public get division() { return this._proxy as ElementMapProxy<HTMLDivElement> }
+    public get descriptionList() { return this._proxy as ElementMapProxy<HTMLDListElement> }
+    public get embed() { return this._proxy as ElementMapProxy<HTMLEmbedElement> }
+    public get form() { return this._proxy as ElementMapProxy<HTMLFormElement> }
+    public get head() { return this._proxy as ElementMapProxy<HTMLHeadElement> }
+    public get heading() { return this._proxy as ElementMapProxy<HTMLHeadingElement> }
+    public get horizontalRule() { return this._proxy as ElementMapProxy<HTMLHRElement> }
+    public get html() { return this._proxy as ElementMapProxy<HTMLHtmlElement> }
+    public get inlineFrame() { return this._proxy as ElementMapProxy<HTMLIFrameElement> }
+    public get image() { return this._proxy as ElementMapProxy<HTMLImageElement> }
+    public get input() { return this._proxy as ElementMapProxy<HTMLInputElement> }
+    public get listItem() { return this._proxy as ElementMapProxy<HTMLLIElement> }
+    public get link() { return this._proxy as ElementMapProxy<HTMLLinkElement> }
+    public get menu() { return this._proxy as ElementMapProxy<HTMLMenuElement> }
+    public get meta() { return this._proxy as ElementMapProxy<HTMLMetaElement> }
+    public get mod() { return this._proxy as ElementMapProxy<HTMLModElement> }
+    public get orderedList() { return this._proxy as ElementMapProxy<HTMLOListElement> }
+    public get optgroups() { return this._proxy as ElementMapProxy<HTMLOptGroupElement> }
+    public get option() { return this._proxy as ElementMapProxy<HTMLOptionElement> }
+    public get paragraph() { return this._proxy as ElementMapProxy<HTMLParagraphElement> }
+    public get preformattedText() { return this._proxy as ElementMapProxy<HTMLPreElement> }
+    public get quote() { return this._proxy as ElementMapProxy<HTMLQuoteElement> }
+    public get script() { return this._proxy as ElementMapProxy<HTMLScriptElement> }
+    public get select() { return this._proxy as ElementMapProxy<HTMLSelectElement> }
+    public get slot() { return this._proxy as ElementMapProxy<HTMLSlotElement> }
+    public get span() { return this._proxy as ElementMapProxy<HTMLSpanElement> }
+    public get style() { return this._proxy as ElementMapProxy<HTMLStyleElement> }
+    public get tableCell() { return this._proxy as ElementMapProxy<HTMLTableCellElement> }
+    public get table() { return this._proxy as ElementMapProxy<HTMLTableElement> }
+    public get tableRow() { return this._proxy as ElementMapProxy<HTMLTableRowElement> }
+    public get tableSection() { return this._proxy as ElementMapProxy<HTMLTableSectionElement> }
+    public get template() { return this._proxy as ElementMapProxy<HTMLTemplateElement> }
+    public get time() { return this._proxy as ElementMapProxy<HTMLTimeElement> }
+    public get title() { return this._proxy as ElementMapProxy<HTMLTitleElement> }
+    public get unorderedList() { return this._proxy as ElementMapProxy<HTMLUListElement> }
 
 }
