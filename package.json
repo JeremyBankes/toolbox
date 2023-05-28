@@ -22,7 +22,7 @@
     },
     "scripts": {
         "setup": "npm install",
-        "clean": "rmdir /Q /S build 2>nul",
+        "clean": "erase /F /S /Q build",
         "build": "npx webpack",
         "build:clean": "npm run clean && npm run build",
         "build:watch": "npx webpack --watch",
