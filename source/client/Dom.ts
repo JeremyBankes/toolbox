@@ -1,13 +1,10 @@
-import { setDefaultHighWaterMark } from "stream";
-import { Data } from "../Data";
+import { Data } from "../shared/Data";
 
-type OnDomReadyCallback = (mapping: ElementMapping) => void | Promise<void>;
-type OnDomErrorCallback = (error: Error, mapping: ElementMapping) => void;
+type OnDomReadyCallback = (mapping: Dom.ElementMapping) => void | Promise<void>;
+type OnDomErrorCallback = (error: Error, mapping: Dom.ElementMapping) => void;
 type SlowedInputCallback = (event: Event, slowed: boolean) => void;
-type FormSubmissionCallback = (data: unknown) => boolean | Promise<boolean>;
-type FormErrorCallback = (error: Error) => void;
-type FormFinallyCallback = () => void;
 type ValueEvaluationCallback = (element: HTMLInputElement) => boolean;
+type InputModifier = (value: string) => string;
 
 type HTMLElementCreationOptions = {
     tagName: string,
@@ -20,30 +17,35 @@ type HTMLElementCreationOptions = {
     childNodes?: Node[]
 };
 
-export default class Dom {
+export namespace Dom {
 
     /** Called when the DOM content is loaded */
-    private static _onReadyListeners: OnDomReadyCallback[] = [];
+    const _onReadyListeners: OnDomReadyCallback[] = [];
 
     /**
      * Called if an error occurs while executing the {@link Network.onReady} callback.
      */
-    private static _onErrorListeners: OnDomErrorCallback[] = [];
+    const _onErrorListeners: OnDomErrorCallback[] = [];
+
+    /**
+     * Represents if the _onReadyListeners have fired yet.
+     */
+    let loaded = false;
 
     /**
      * Registers a callback to be run when the DOM content loads.
      * @param callback The callback to be run when the DOM content loads.
      */
-    public static onReady(callback: OnDomReadyCallback) {
-        Dom._onReadyListeners.push(callback);
+    export function onReady(callback: OnDomReadyCallback) {
+        _onReadyListeners.push(callback);
     }
 
     /**
      * Registers a callback to be run if an error occurs while executing onReady callbacks.
      * @param callback The callback to be run if an error occurs while executing onReady callbacks.
      */
-    public static onError(callback: OnDomErrorCallback) {
-        Dom._onErrorListeners.push(callback);
+    export function onError(callback: OnDomErrorCallback) {
+        _onErrorListeners.push(callback);
     }
 
     /**
@@ -51,7 +53,7 @@ export default class Dom {
      * @param root The document to create the mapping for.
      * @returns A mapping of element in {@link root}
      */
-    public static getMapping(root: Document | DocumentFragment = document) {
+    export function getMapping(root: Document | DocumentFragment = document) {
         return new ElementMapping(root);
     }
 
@@ -60,7 +62,7 @@ export default class Dom {
      * @param options The options used to create the element
      * @returns The created HTML element
      */
-    public static create(options: HTMLElementCreationOptions) {
+    export function create(options: HTMLElementCreationOptions) {
         const element = document.createElement(options.tagName);
         element.classList.add(...Data.get(options, "classList", []));
         element.textContent = Data.get(options, "textContent", "");
@@ -91,7 +93,7 @@ export default class Dom {
      * @param elementId The ID of an element to check the existance of.
      * @returns True of an element with the ID "elementId" exists in the DOM, false otherwise.
      */
-    public static exists(elementId: string) {
+    export function exists(elementId: string) {
         return document.getElementById(elementId) !== null;
     }
 
@@ -99,7 +101,7 @@ export default class Dom {
      * Removes all children from a node.
      * @param container The node to remove the children from.
      */
-    public static clear(container: Node) {
+    export function clear(container: Node) {
         while (container.lastChild !== null) {
             container.lastChild.remove();
         }
@@ -110,11 +112,9 @@ export default class Dom {
      * Retrieves form data for inputs within a certain section in a form
      * @param section The section to retrieve the form data from. This can be the form itself.
      */
-    public static getFormData(section: HTMLElement) {
-        const form = section.closest("form");
-        if (form === null) {
-            throw new Error("Section not in form.");
-        }
+    export function getFormData(section: HTMLElement) {
+        const form = section instanceof HTMLFormElement ? section : section.closest("form");
+        Data.assert(form !== null, "The provided section is not in a form element.");
         const formData = new FormData(form);
         for (const element of form.elements) {
             if (!section.contains(element)) {
@@ -131,7 +131,7 @@ export default class Dom {
      * @param form The form element to populate.
      * @param data The data to populate {@link form} with.
      */
-    public static setFormData(form: HTMLFormElement, data: FormData | object) {
+    export function setFormData(form: HTMLFormElement, data: FormData | object) {
         let formData: FormData;
         if (data instanceof FormData) {
             formData = data;
@@ -171,16 +171,16 @@ export default class Dom {
      * Clears the value of the inputs within a certain section within a form.
      * @param section The section to retrieve the form data from.
      */
-    public static clearFormSection(section: HTMLElement) {
-        const form = section.closest("form");
-        if (form === null) {
-            throw new Error("Section not in form.");
-        }
+    export function clearFormSection(section: HTMLElement) {
+        const form = section instanceof HTMLFormElement ? section : section.closest("form");
+        Data.assert(form !== null, "The provided section is not in a form element.");
         for (const element of form.elements) {
             if (section.contains(element)) {
                 if (element instanceof HTMLInputElement) {
                     if (element.type === "checkbox" || element.type === "radio") {
                         element.checked = false;
+                    } else if (element.type === "file") {
+                        element.files = new FileList();
                     } else {
                         element.value = "";
                     }
@@ -197,7 +197,7 @@ export default class Dom {
      * Submits a form whilst triggering HTML's default form validation.
      * @param form A form to submit.
      */
-    public static submitFormWithValidation(form: HTMLFormElement) {
+    export function submitFormWithValidation(form: HTMLFormElement) {
         const input = document.createElement("input");
         input.style.display = "none";
         input.setAttribute("type", "submit");
@@ -211,7 +211,7 @@ export default class Dom {
      * @param element The element to pluse
      * @param color The color of the pluse
      */
-    public static pulse(element: HTMLElement, color: string = "#FF0000") {
+    export function pulse(element: HTMLElement, color: string = "#FF0000") {
         let i = 0;
         const duration = 500;
         const steps = 20;
@@ -233,8 +233,18 @@ export default class Dom {
      * @param name The name of the css variable. (Starts with "--")
      * @returns The computed style of the css variable named {@link name}.
      */
-    public static getCssVariable(name: string) {
+    export function getCssVariable(name: string) {
         return getComputedStyle(document.documentElement).getPropertyValue(name);
+    }
+
+    /**
+     * Sets a CSS variable for a given element.
+     * @param name The name of the css variable. (Starts with "--")
+     * @param value The CSS value of the variable.
+     * @param element The host element of the styles. (Defaults to document.documentElement)
+     */
+    export function setCssVariable(name: string, value: string, element: HTMLElement = document.documentElement) {
+        element.style.setProperty(name, value);
     }
 
     /**
@@ -244,7 +254,7 @@ export default class Dom {
      * @param callback The callback to be run after inputting
      * @param delay The time in milliseconds to wait after the user has inputted until firing the callback 
      */
-    public static setSlowedInputListener(input: HTMLInputElement, callback: SlowedInputCallback, delay: number = 500) {
+    export function setSlowedInputListener(input: HTMLInputElement, callback: SlowedInputCallback, delay: number = 500) {
         if (callback) {
             let timeout: NodeJS.Timeout;
             input.oninput = event => {
@@ -259,84 +269,28 @@ export default class Dom {
         }
     }
 
-    public static addAlwaysUppercaseModifier(input: HTMLInputElement) {
+
+    /**
+     * Attaches a modifier to an input to allow text tranformations. I.E. Auto capitalizing a postal code input, title casing a name input, etc.
+     * @param input An input to apply an input modifer to.
+     * @param modifier The modifier for "input"s value.
+     */
+    export function addTextModifier(input: HTMLInputElement, modifier: InputModifier) {
         input.addEventListener("input", () => {
             const selectionStart = input.selectionStart;
             const selectionEnd = input.selectionEnd;
-            input.value = input.value.toUpperCase();
+            input.value = modifier(input.value);
             input.setSelectionRange(selectionStart, selectionEnd);
         });
-    }
-
-    public static setFormSubmitListener() {
-        // form.onsubmit = (event) => {
-        //     if (event instanceof SubmitEvent) {
-        //         const form = event.target;
-        //         if (form instanceof HTMLFormElement) {
-        //             const inputs = form.querySelectorAll("input[name]:not(:disabled),textarea[name]:not(:disabled),select[name]:not(:disabled),button[name]:not(:disabled)");
-        //             const data = {};
-        //             for (const input of inputs) {
-        //                 if (
-        //                     input instanceof HTMLInputElement
-        //                     || input instanceof HTMLTextAreaElement
-        //                     || input instanceof HTMLSelectElement
-        //                     || input instanceof HTMLButtonElement
-        //                 ) {
-        //                     let value = null;
-        //                     switch (input.type) {
-        //                         case "checkbox":
-        //                             if (input instanceof HTMLInputElement) {
-        //                                 if (input.hasAttribute("value")) {
-        //                                     if (input.checked) {
-        //                                         value = input.value;
-        //                                     }
-        //                                 } else {
-        //                                     value = input.checked;
-        //                                 }
-        //                             }
-        //                             break;
-        //                         case "number":
-        //                             value = parseFloat(input.value);
-        //                             break;
-        //                         default:
-        //                             value = input.value;
-        //                             break;
-        //                     }
-        //                     if (value !== null) {
-        //                         Data.set(data, input.name, value);
-        //                     }
-        //                 }
-        //             }
-        //             form.classList.add("loading");
-        //             Promise.resolve(submissionCallback(data)).then(result => {
-        //                 if (result) {
-        //                     form.reset();
-        //                 }
-        //             }).catch((error) => {
-        //                 console.warn(error);
-        //                 if (errorCallback !== null) {
-        //                     errorCallback(error);
-        //                 }
-        //             }).finally(() => {
-        //                 if (finallyCallback !== null) {
-        //                     finallyCallback();
-        //                 }
-        //                 form.classList.remove("loading");
-        //             });
-        //         }
-        //     }
-        //     return false;
-        // };
-        return {};
     }
 
     /**
      * Controls the existance of "templateElement"s content in the DOM based on the value of "controlInput"
      * @param templateElement The element whoes existance is dictated by "controlInput"
      * @param controlInput The element whoes value controls the existance of "templateElement"
-     * @param valueEvaluationCallback The callback to assess "controlInput"s value. Returns true for templateElement to exists, false otherwise
+     * @param valueEvaluationCallback The callback to assess "controlInput"s value. Returns true for "templateElement" to exists, false otherwise.
      */
-    public static existanceControlledBy(templateElement: HTMLTemplateElement, controlInput: HTMLInputElement, valueEvaluationCallback: ValueEvaluationCallback = (controlInput) => controlInput.checked) {
+    export function existanceControlledBy(templateElement: HTMLTemplateElement, controlInput: HTMLInputElement, valueEvaluationCallback: ValueEvaluationCallback = (controlInput) => controlInput.checked) {
         const puppetElements = [...templateElement.content.childNodes];
         const update = () => {
             if (valueEvaluationCallback(controlInput)) {
@@ -345,90 +299,86 @@ export default class Dom {
                 templateElement.content.append(...puppetElements);
             }
         };
-        controlInput.onchange = update;
+        controlInput.addEventListener("change", update);
         update();
     }
 
-    static loaded: boolean = false;
+    Data.assert(globalThis.window !== undefined, "Missing window on globalThis. Did you attempt to import \"/client\" outside of a browser?");
+    addEventListener("DOMContentLoaded", () => {
+        if (!loaded) {
+            const mapping = Dom.getMapping();
+            Promise.all(_onReadyListeners.map(readyListener => {
+                return readyListener(mapping);
+            })).catch(error => {
+                for (const errorListener of _onErrorListeners) {
+                    errorListener(error, mapping);
+                }
+            });
+            loaded = true;
+        }
+    });
 
-    static {
-        if (globalThis.window !== undefined && "addEventListener" in globalThis.window && typeof globalThis.window.addEventListener === "function") {
-            addEventListener("DOMContentLoaded", () => {
-                if (!Dom.loaded) {
-                    const mapping = Dom.getMapping();
-                    Promise.all(Dom._onReadyListeners.map(readyListener => {
-                        return readyListener(mapping);
-                    })).catch(error => {
-                        for (const errorListner of Dom._onErrorListeners) {
-                            errorListner(error, mapping);
-                        }
-                    });
-                    Dom.loaded = true;
+
+    type ElementMapProxy<Element extends HTMLElement> = { [ElementId: string]: Element };
+    /**
+     * Holds a mapping of IDs to their corresponding elements
+     * An easy-to-use typed, wrapping of document.getElementById()
+     */
+    export class ElementMapping {
+
+        private _proxy: {};
+
+        public constructor(root: Document | DocumentFragment = document) {
+            this._proxy = new Proxy(root, {
+                get(root, elementId: string) {
+                    return root.getElementById(elementId);
                 }
             });
         }
+
+        public get element() { return this._proxy as ElementMapProxy<HTMLElement> }
+        public get anchor() { return this._proxy as ElementMapProxy<HTMLAnchorElement> }
+        public get base() { return this._proxy as ElementMapProxy<HTMLBaseElement> }
+        public get body() { return this._proxy as ElementMapProxy<HTMLBodyElement> }
+        public get break() { return this._proxy as ElementMapProxy<HTMLBRElement> }
+        public get button() { return this._proxy as ElementMapProxy<HTMLButtonElement> }
+        public get canvas() { return this._proxy as ElementMapProxy<HTMLCanvasElement> }
+        public get division() { return this._proxy as ElementMapProxy<HTMLDivElement> }
+        public get descriptionList() { return this._proxy as ElementMapProxy<HTMLDListElement> }
+        public get embed() { return this._proxy as ElementMapProxy<HTMLEmbedElement> }
+        public get form() { return this._proxy as ElementMapProxy<HTMLFormElement> }
+        public get head() { return this._proxy as ElementMapProxy<HTMLHeadElement> }
+        public get heading() { return this._proxy as ElementMapProxy<HTMLHeadingElement> }
+        public get horizontalRule() { return this._proxy as ElementMapProxy<HTMLHRElement> }
+        public get html() { return this._proxy as ElementMapProxy<HTMLHtmlElement> }
+        public get inlineFrame() { return this._proxy as ElementMapProxy<HTMLIFrameElement> }
+        public get image() { return this._proxy as ElementMapProxy<HTMLImageElement> }
+        public get input() { return this._proxy as ElementMapProxy<HTMLInputElement> }
+        public get listItem() { return this._proxy as ElementMapProxy<HTMLLIElement> }
+        public get link() { return this._proxy as ElementMapProxy<HTMLLinkElement> }
+        public get menu() { return this._proxy as ElementMapProxy<HTMLMenuElement> }
+        public get meta() { return this._proxy as ElementMapProxy<HTMLMetaElement> }
+        public get mod() { return this._proxy as ElementMapProxy<HTMLModElement> }
+        public get orderedList() { return this._proxy as ElementMapProxy<HTMLOListElement> }
+        public get optgroups() { return this._proxy as ElementMapProxy<HTMLOptGroupElement> }
+        public get option() { return this._proxy as ElementMapProxy<HTMLOptionElement> }
+        public get paragraph() { return this._proxy as ElementMapProxy<HTMLParagraphElement> }
+        public get preformattedText() { return this._proxy as ElementMapProxy<HTMLPreElement> }
+        public get quote() { return this._proxy as ElementMapProxy<HTMLQuoteElement> }
+        public get script() { return this._proxy as ElementMapProxy<HTMLScriptElement> }
+        public get select() { return this._proxy as ElementMapProxy<HTMLSelectElement> }
+        public get slot() { return this._proxy as ElementMapProxy<HTMLSlotElement> }
+        public get span() { return this._proxy as ElementMapProxy<HTMLSpanElement> }
+        public get style() { return this._proxy as ElementMapProxy<HTMLStyleElement> }
+        public get tableCell() { return this._proxy as ElementMapProxy<HTMLTableCellElement> }
+        public get table() { return this._proxy as ElementMapProxy<HTMLTableElement> }
+        public get tableRow() { return this._proxy as ElementMapProxy<HTMLTableRowElement> }
+        public get tableSection() { return this._proxy as ElementMapProxy<HTMLTableSectionElement> }
+        public get template() { return this._proxy as ElementMapProxy<HTMLTemplateElement> }
+        public get time() { return this._proxy as ElementMapProxy<HTMLTimeElement> }
+        public get title() { return this._proxy as ElementMapProxy<HTMLTitleElement> }
+        public get unorderedList() { return this._proxy as ElementMapProxy<HTMLUListElement> }
+
     }
-
-}
-
-type ElementMapProxy<Element extends HTMLElement> = { [ElementId: string]: Element };
-/**
- * Holds a mapping of IDs to their corresponding elements
- * An easy-to-use typed, wrapping of document.getElementById()
- */
-export class ElementMapping {
-
-    private _proxy: {};
-
-    public constructor(root: Document | DocumentFragment = document) {
-        this._proxy = new Proxy(root, {
-            get(root, elementId: string) {
-                return root.getElementById(elementId);
-            }
-        });
-    }
-
-    public get element() { return this._proxy as ElementMapProxy<HTMLElement> }
-    public get anchor() { return this._proxy as ElementMapProxy<HTMLAnchorElement> }
-    public get base() { return this._proxy as ElementMapProxy<HTMLBaseElement> }
-    public get body() { return this._proxy as ElementMapProxy<HTMLBodyElement> }
-    public get break() { return this._proxy as ElementMapProxy<HTMLBRElement> }
-    public get button() { return this._proxy as ElementMapProxy<HTMLButtonElement> }
-    public get canvas() { return this._proxy as ElementMapProxy<HTMLCanvasElement> }
-    public get division() { return this._proxy as ElementMapProxy<HTMLDivElement> }
-    public get descriptionList() { return this._proxy as ElementMapProxy<HTMLDListElement> }
-    public get embed() { return this._proxy as ElementMapProxy<HTMLEmbedElement> }
-    public get form() { return this._proxy as ElementMapProxy<HTMLFormElement> }
-    public get head() { return this._proxy as ElementMapProxy<HTMLHeadElement> }
-    public get heading() { return this._proxy as ElementMapProxy<HTMLHeadingElement> }
-    public get horizontalRule() { return this._proxy as ElementMapProxy<HTMLHRElement> }
-    public get html() { return this._proxy as ElementMapProxy<HTMLHtmlElement> }
-    public get inlineFrame() { return this._proxy as ElementMapProxy<HTMLIFrameElement> }
-    public get image() { return this._proxy as ElementMapProxy<HTMLImageElement> }
-    public get input() { return this._proxy as ElementMapProxy<HTMLInputElement> }
-    public get listItem() { return this._proxy as ElementMapProxy<HTMLLIElement> }
-    public get link() { return this._proxy as ElementMapProxy<HTMLLinkElement> }
-    public get menu() { return this._proxy as ElementMapProxy<HTMLMenuElement> }
-    public get meta() { return this._proxy as ElementMapProxy<HTMLMetaElement> }
-    public get mod() { return this._proxy as ElementMapProxy<HTMLModElement> }
-    public get orderedList() { return this._proxy as ElementMapProxy<HTMLOListElement> }
-    public get optgroups() { return this._proxy as ElementMapProxy<HTMLOptGroupElement> }
-    public get option() { return this._proxy as ElementMapProxy<HTMLOptionElement> }
-    public get paragraph() { return this._proxy as ElementMapProxy<HTMLParagraphElement> }
-    public get preformattedText() { return this._proxy as ElementMapProxy<HTMLPreElement> }
-    public get quote() { return this._proxy as ElementMapProxy<HTMLQuoteElement> }
-    public get script() { return this._proxy as ElementMapProxy<HTMLScriptElement> }
-    public get select() { return this._proxy as ElementMapProxy<HTMLSelectElement> }
-    public get slot() { return this._proxy as ElementMapProxy<HTMLSlotElement> }
-    public get span() { return this._proxy as ElementMapProxy<HTMLSpanElement> }
-    public get style() { return this._proxy as ElementMapProxy<HTMLStyleElement> }
-    public get tableCell() { return this._proxy as ElementMapProxy<HTMLTableCellElement> }
-    public get table() { return this._proxy as ElementMapProxy<HTMLTableElement> }
-    public get tableRow() { return this._proxy as ElementMapProxy<HTMLTableRowElement> }
-    public get tableSection() { return this._proxy as ElementMapProxy<HTMLTableSectionElement> }
-    public get template() { return this._proxy as ElementMapProxy<HTMLTemplateElement> }
-    public get time() { return this._proxy as ElementMapProxy<HTMLTimeElement> }
-    public get title() { return this._proxy as ElementMapProxy<HTMLTitleElement> }
-    public get unorderedList() { return this._proxy as ElementMapProxy<HTMLUListElement> }
 
 }

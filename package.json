@@ -1,12 +1,24 @@
 {
     "name": "@jeremy-bankes/toolbox",
-    "version": "1.8.18",
+    "version": "2.0.0",
     "description": "A utility library delivering many quality of life improvements to both browser and node environments.",
-    "types": "build/types",
     "exports": {
-        "./test": "./build/index.js",
-        "./client": "./build/client/index.js",
-        "./server": "./build/server/index.js"
+        "./shared": "./build/output/shared.js",
+        "./client": "./build/output/client.js",
+        "./server": "./build/output/server.js"
+    },
+    "typesVersions": {
+        "*": {
+            "client": [
+                "build/types/client"
+            ],
+            "server": [
+                "build/types/server"
+            ],
+            "shared": [
+                "build/types/shared"
+            ]
+        }
     },
     "scripts": {
         "setup": "npm install",

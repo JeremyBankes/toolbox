@@ -1,4 +1,4 @@
-import { Data } from "../Data";
+import { Data } from "../shared/Data";
 
 export type CookieOptions = {
     path?: string,
@@ -9,14 +9,14 @@ export type CookieOptions = {
     sameSite?: "lax" | "strict" | "none"
 };
 
-export default class Cookies {
+export namespace Cookies {
 
     /**
      * Retrieves a cookie by name.
      * @param name The name of the cookie to get the value of.
      * @returns The cookie named {@link name}, or null if it does not exist.
      */
-    public static get(name: string) {
+    export function get(name: string) {
         const valueStrings = document.cookie.split(";");
         for (const valueString of valueStrings) {
             const [possibleKey, value] = valueString.trim().split("=").map(decodeURIComponent);
@@ -32,7 +32,7 @@ export default class Cookies {
      * @param name The name of the cookie to get the value of.
      * @returns The cookie named {@link name}, or null if it does not exist, or cannot be parsed as JSON.
      */
-    public static getJson(name: string) {
+    export function getJson(name: string) {
         try {
             const cookie = Cookies.get(name);
             Data.assert(cookie !== null);
@@ -46,7 +46,7 @@ export default class Cookies {
      * Retrieves all cookies and returns each key, value pair as an object.
      * @returns An object where each key in a cookie name that maps a cookie value.
      */
-    public static getAll(): { [key: string]: string } {
+    export function getAll(): { [key: string]: string } {
         const cookies: { [key: string]: string } = {};
         const valueStrings = document.cookie.split(";");
         for (const valueString of valueStrings) {
@@ -61,7 +61,7 @@ export default class Cookies {
      * @param name The name of the cookie to set the value of.
      * @param value The value of the cookie to be set.
      */
-    public static set(name: string, value: string, options: CookieOptions = {}) {
+    export function set(name: string, value: string, options: CookieOptions = {}) {
         const pieces = [`${name}=${encodeURIComponent(value)}`];
         if (Data.has(options, "path")) {
             pieces.push(`path=${options.path}`);
@@ -89,7 +89,7 @@ export default class Cookies {
      * @param name The name of the cookie to set the value of.
      * @param value The value of the cookie to be set.
      */
-    public static setJson(name: string, value: any, options?: CookieOptions) {
+    export function setJson(name: string, value: any, options?: CookieOptions) {
         Cookies.set(name, JSON.stringify(value), options);
     }
 
@@ -97,7 +97,7 @@ export default class Cookies {
      * Deletes a cookie named {@link name}.
      * @param name The name of the cookie to delete.
      */
-    public static delete(name: string, options: CookieOptions = {}) {
+    export function remove(name: string, options: CookieOptions = {}) {
         const pieces = [`${name}=`];
         if ("path" in options) {
             pieces.push(`path=${options.path}`);

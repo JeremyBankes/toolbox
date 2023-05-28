@@ -86,7 +86,11 @@ export namespace Data {
             }
         } else {
             if (typeof target === "object" && target !== null && key in target) {
-                return Data.get(target[key], pieces.join("."), fallback);
+                if (pieces.length > 0) {
+                    return Data.get(target[key], pieces.join("."), fallback);
+                } else {
+                    return target[key];
+                }
             } else {
                 return fallback;
             }

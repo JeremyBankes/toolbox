@@ -1,4 +1,4 @@
-import { Data } from "../Data";
+import { Data } from "../shared/Data";
 
 enum RequestMethod {
     GET = "GET", HEAD = "HEAD", OPTIONS = "OPTIONS", PATCH = "PATCH",
@@ -16,12 +16,12 @@ type NetworkDefaults = {
     postHeaders: HeadersInit
 };
 
-export default class Network {
+export namespace Network {
 
     /**
      * Used specify default to use for all outgoing requests.
      */
-    public static defaults: NetworkDefaults = {
+    export const defaults: NetworkDefaults = {
         headers: {},
         getHeaders: {},
         postHeaders: {},
@@ -35,7 +35,7 @@ export default class Network {
      * @param headers The headers to send to {@link url}
      * @returns The response from {@link url}
      */
-    public static async request(url: string, method: RequestMethod = RequestMethod.GET, body?: BodyInit | object, headers: HeadersInit = {}) {
+    export async function request(url: string, method: RequestMethod = RequestMethod.GET, body?: BodyInit | object, headers: HeadersInit = {}) {
         if (Network.defaults.host !== null && url.match(/^[a-zA-Z]+:\/\//) === null) {
             url = Network.defaults.host + url;
         }
@@ -66,7 +66,7 @@ export default class Network {
      * @param headers The headers to send to {@link url}
      * @returns The response from {@link url}
      */
-    public static async get(url: string, parameters?: URLSearchParams, headers: HeadersInit = {}) {
+    export async function get(url: string, parameters?: URLSearchParams, headers: HeadersInit = {}) {
         if (parameters !== undefined) {
             url = url + "?" + parameters.toString();
         }
@@ -81,7 +81,7 @@ export default class Network {
      * @param headers The headers to send to {@link url}
      * @returns The response from {@link url}
      */
-    public static async post(url: string, body: BodyInit | object = {}, headers: HeadersInit = {}) {
+    export async function post(url: string, body: BodyInit | object = {}, headers: HeadersInit = {}) {
         return await Network.request(url, RequestMethod.POST, body, headers);
     }
 
@@ -93,7 +93,7 @@ export default class Network {
      * @param headers The headers to send to {@link url}
      * @returns The response from {@link url}
      */
-    public static async put(url: string, body: BodyInit | object, headers: HeadersInit = {}) {
+    export async function put(url: string, body: BodyInit | object, headers: HeadersInit = {}) {
         return await Network.request(url, RequestMethod.PUT, body, headers);
     }
 
@@ -105,22 +105,22 @@ export default class Network {
      * @param headers The headers to send to {@link url}
      * @returns The response from {@link url}
      */
-    public static async patch(url: string, body: BodyInit | object, headers = {}) {
+    export async function patch(url: string, body: BodyInit | object, headers = {}) {
         return await Network.request(url, RequestMethod.PATCH, body, headers);
     }
 
     /**
      * Sends a delete request with optional body data and headers.
      * Uses the fetch API and {@link Network.defaults}
+     * @note It's unsatisfying that delete is a reserved keyword.
+     * 
      * @param url The address of the server to make the request to.
      * @param body The body data to send to {@link url}
      * @param headers The headers to send to {@link url}
      * @returns The response from {@link url}
      */
-    public static async delete(url: string, body: BodyInit | object, headers = {}) {
+    export async function deleteRequest(url: string, body: BodyInit | object, headers = {}) {
         return await Network.request(url, RequestMethod.DELETE, body, headers);
     }
 
 }
-
-Network.defaults.host;
