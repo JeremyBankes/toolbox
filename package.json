@@ -7,6 +7,9 @@
         "./client": "./build/output/client.js",
         "./server": "./build/output/server.js"
     },
+    "files": [
+        "build"
+    ],
     "typesVersions": {
         "*": {
             "client": [
@@ -26,7 +29,7 @@
         "build": "npx webpack",
         "build:clean": "npm run clean && npm run build",
         "build:watch": "npx webpack --watch",
-        "publish": "npm run build:clean && npm publish --access public"
+        "prepublish": "npm run build:clean"
     },
     "repository": {
         "type": "git",
