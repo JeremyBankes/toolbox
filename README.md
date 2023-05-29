@@ -69,3 +69,6 @@ import { Network, Dom, Cookies  } from "@jeremy-bankes/toolbox/client";
 // I got tired, so gave up on this section. I'll get to it... eventually.
 // Just look at the source...
 ```
+
+| :warning: | This project uses [subpath exports](https://nodejs.org/api/packages.html#subpath-exports) only supported in Node v12.7.0+. Ensure you use one of Node's new module resolution strategies, I.E. NodeNext. |
+|-|:-|
