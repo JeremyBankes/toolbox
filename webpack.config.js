@@ -16,7 +16,6 @@ const rules = [
                     compact: false
                 }
             },
-            // Use ts-loader instead of @babel/preset-typescript because it supports emitting declaration files.
             "ts-loader"
         ]
     }
@@ -34,12 +33,11 @@ const configurations = [
         mode,
         module: { rules },
         resolve,
-        entry: "./source/shared/index.ts",
+        entry: "./source/index.ts",
         output: {
-            globalObject: "this",
-            path: Path.resolve("build/output"),
-            filename: "shared.js",
-            library: { name: "Toolbox", type: "umd" }
+            path: Path.resolve("build"),
+            filename: "index.js",
+            library: { name: "SharedToolbox", type: "umd" }
         }
     },
     {
@@ -48,29 +46,20 @@ const configurations = [
         resolve,
         entry: "./source/client/index.ts",
         output: {
-            globalObject: "this",
-            path: Path.resolve("build/output"),
-            filename: "client.js",
-            library: { name: "Toolbox", type: "umd" }
+            path: Path.resolve("build/client"),
+            filename: "index.js",
+            library: { name: "ClientToolbox", type: "umd" }
         }
     },
     {
         mode,
+        module: { rules },
         resolve,
         entry: "./source/server/index.ts",
-        target: "node",
         output: {
-            globalObject: "this",
-            path: Path.resolve("build/output"),
-            filename: "server.js",
-            library: { name: "Toolbox", type: "umd" }
-        },
-        module: {
-            rules: [
-                {
-                    loader: "ts-loader"
-                }
-            ]
+            path: Path.resolve("build/server"),
+            filename: "index.js",
+            library: { name: "ServerToolbox", type: "umd" }
         }
     }
 ];
