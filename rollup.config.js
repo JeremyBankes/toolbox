@@ -19,6 +19,7 @@ export default [
     },
     {
         input: "source/client/index.ts",
+        external: ["@jeremy-bankes/toolbox/shared"],
         output: {
             file: "build/client/index.js",
             name: "Schema",
@@ -33,13 +34,17 @@ export default [
     },
     {
         input: "source/server/index.ts",
+        external: ["fs", "path"],
         output: {
-            dir: "build/server",
+            file: "build/server/index.js",
             name: "Schema",
             format: "cjs",
             sourcemap: false,
             exports: "named",
         },
-        plugins: [typescript({ tsconfig: "source/server/tsconfig.json" })]
+        plugins: [
+            typescript({ tsconfig: "source/server/tsconfig.json" })
+        ]
     }
+
 ];
