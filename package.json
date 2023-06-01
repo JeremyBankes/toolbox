@@ -3,18 +3,9 @@
     "version": "2.0.5",
     "description": "A utility library delivering many quality of life improvements to both browser and node environments.",
     "exports": {
-        "./shared": {
-            "types": "./build/types/shared/index.d.ts",
-            "default": "./build/output/shared.js"
-        },
-        "./client": {
-            "types": "./build/types/client/index.d.ts",
-            "default": "./build/output/client.js"
-        },
-        "./server": {
-            "types": "./build/types/server/index.d.ts",
-            "default": "./build/output/server.js"
-        }
+        "./shared": "./build/shared/index.js",
+        "./client": "./build/client/index.js",
+        "./server": "./build/server/index.js"
     },
     "files": [
         "build"
@@ -22,9 +13,9 @@
     "scripts": {
         "setup": "npm install",
         "clean": "erase /F /S /Q build",
-        "build": "npx webpack",
+        "build": "npx rollup --bundleConfigAsCjs --config rollup.config.js",
         "build:clean": "npm run clean && npm run build",
-        "build:watch": "npx webpack --watch",
+        "build:watch": "npx rollup --watch --bundleConfigAsCjs --config rollup.config.js",
         "push": "npm run build:clean && npm publish --access public"
     },
     "repository": {
@@ -46,11 +37,17 @@
     "devDependencies": {
         "@babel/preset-env": "^7.21.5",
         "@babel/preset-typescript": "^7.21.5",
+        "@rollup/plugin-babel": "^6.0.3",
+        "@rollup/plugin-typescript": "^11.1.1",
         "@types/node": "^20.2.4",
         "babel-loader": "^9.1.2",
         "nodemon": "^2.0.19",
+        "rollup": "^3.23.0",
         "ts-loader": "^9.4.3",
         "typescript": "^4.8.3",
         "webpack-cli": "^5.1.1"
+    },
+    "dependencies": {
+        "tslib": "^2.5.2"
     }
 }
