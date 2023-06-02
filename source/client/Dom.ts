@@ -19,8 +19,6 @@ type HTMLElementCreationOptions = {
 
 export namespace Dom {
 
-    export const mapping = Dom.getMapping();
-
     /**
      * Called if an error occurs while executing the {@link Network.onReady} callback.
      */
@@ -31,6 +29,7 @@ export namespace Dom {
      * @param callback The callback to be run when the DOM content loads.
      */
     export function onReady(callback: OnDomReadyCallback) {
+        const mapping = Dom.getMapping();
         const execute = () => Promise.resolve(callback(mapping)).catch((error) => _onErrorListeners.forEach(listener => listener(error, mapping)));
         if (document.readyState === "complete") {
             execute();
