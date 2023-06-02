@@ -1,6 +1,6 @@
 {
     "name": "@jeremy-bankes/toolbox",
-    "version": "2.0.9",
+    "version": "2.0.10",
     "description": "A utility library delivering many quality of life improvements to both browser and node environments.",
     "exports": {
         "./shared": "./build/shared/index.js",
