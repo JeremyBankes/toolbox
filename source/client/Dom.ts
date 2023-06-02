@@ -19,8 +19,7 @@ type HTMLElementCreationOptions = {
 
 export namespace Dom {
 
-    /** Called when the DOM content is loaded */
-    const _onReadyListeners: OnDomReadyCallback[] = [];
+    export const mapping = Dom.getMapping();
 
     /**
      * Called if an error occurs while executing the {@link Network.onReady} callback.
@@ -28,16 +27,16 @@ export namespace Dom {
     const _onErrorListeners: OnDomErrorCallback[] = [];
 
     /**
-     * Represents if the _onReadyListeners have fired yet.
-     */
-    let loaded = false;
-
-    /**
      * Registers a callback to be run when the DOM content loads.
      * @param callback The callback to be run when the DOM content loads.
      */
     export function onReady(callback: OnDomReadyCallback) {
-        _onReadyListeners.push(callback);
+        const execute = () => Promise.resolve(callback(mapping)).catch((error) => _onErrorListeners.forEach(listener => listener(error, mapping)));
+        if (document.readyState === "complete") {
+            execute();
+        } else {
+            window.addEventListener("DOMContentLoaded", execute);
+        }
     }
 
     /**
@@ -269,7 +268,6 @@ export namespace Dom {
         }
     }
 
-
     /**
      * Attaches a modifier to an input to allow text tranformations. I.E. Auto capitalizing a postal code input, title casing a name input, etc.
      * @param input An input to apply an input modifer to.
@@ -302,22 +300,6 @@ export namespace Dom {
         controlInput.addEventListener("change", update);
         update();
     }
-
-    Data.assert(globalThis.window !== undefined, "Missing window on globalThis. Did you attempt to import \"/client\" outside of a browser?");
-    addEventListener("DOMContentLoaded", () => {
-        if (!loaded) {
-            const mapping = Dom.getMapping();
-            Promise.all(_onReadyListeners.map(readyListener => {
-                return readyListener(mapping);
-            })).catch(error => {
-                for (const errorListener of _onErrorListeners) {
-                    errorListener(error, mapping);
-                }
-            });
-            loaded = true;
-        }
-    });
-
 
     type ElementMapProxy<Element extends HTMLElement> = { [ElementId: string]: Element };
     /**
