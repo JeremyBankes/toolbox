@@ -28,6 +28,17 @@ export namespace Error {
     }
 
     /**
+     * Thrown when a Data.assertion is failed.
+     */
+    export class Assertion extends Original {
+
+        public constructor(message?: string) {
+            super(message);
+        }
+
+    }
+
+    /**
      * For use to indicate networks errors whilst using the HTTP protocol.
      */
     export class Http extends Original {
