@@ -1,3 +1,5 @@
+import { Error } from "./Error";
+
 type ObjectWithPath<Path extends string, Type = any> = (
     Path extends `${infer Head}.${infer Tail}` ? (
         { [Key in Head]: ObjectWithPath<Tail, Type> }
@@ -107,7 +109,7 @@ export namespace Data {
     export function getOrThrow<Target, Path extends string>(target: Target, path: Path): TypeAtPath<Target, Path> {
         const value = Data.get(target, path, undefined);
         if (value === undefined) {
-            throw new Error(`Failed to find valid ${path} value in ${JSON.stringify(target)}. "${value}" value failed validation predicate.`);
+            throw new Error.Original(`Failed to find valid ${path} value in ${JSON.stringify(target)}. "${value}" value failed validation predicate.`);
         }
         return value;
     }
@@ -154,7 +156,7 @@ export namespace Data {
                 return Data.remove(target[key], pieces.join("."));
             }
         }
-        throw new Error(`Failed to remove "${path}" from ${JSON.stringify(target)}.`);
+        throw new Error.Original(`Failed to remove "${path}" from ${JSON.stringify(target)}.`);
     }
 
     /**
@@ -252,7 +254,7 @@ export namespace Data {
 
     export function assert(condition: boolean, message: string = "Assertion failed."): asserts condition {
         if (!condition) {
-            throw new Error(message);
+            throw new Error.Assertion(message);
         }
     }
 

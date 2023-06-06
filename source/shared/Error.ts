@@ -5,10 +5,19 @@ export namespace Error {
 
     export const Original = global.Error;
 
+    export class Named extends Original {
+
+        public constructor(message?: string, options?: ErrorOptions) {
+            super(message, options);
+            this.name = `${this.constructor.name} Error`;
+        }
+
+    }
+
     /**
      * For when something goes very wrong.
      */
-    export class Fatal extends Original {
+    export class Fatal extends Named {
 
         public constructor(message?: string) {
             super(message);
@@ -28,9 +37,20 @@ export namespace Error {
     }
 
     /**
+     * Thrown when a Data.assertion is failed.
+     */
+    export class Assertion extends Named {
+
+        public constructor(message?: string) {
+            super(message);
+        }
+
+    }
+
+    /**
      * For use to indicate networks errors whilst using the HTTP protocol.
      */
-    export class Http extends Original {
+    export class Http extends Named {
 
         protected _code: number;
 
