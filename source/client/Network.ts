@@ -36,12 +36,12 @@ export namespace Network {
      * @returns The response from {@link url}
      */
     export async function request(url: string, method: RequestMethod = RequestMethod.GET, body?: BodyInit | object, headers: HeadersInit = {}) {
-        if (Network.defaults.host !== null && url.match(/^[a-zA-Z]+:\/\//) === null) {
+        if (Network.defaults.host !== undefined && url.match(/^[a-zA-Z]+:\/\//) === null) {
             url = Network.defaults.host + url;
         }
         const additionalHeaders: Record<string, string> = {};
         if (typeof body === "object") {
-            body = body === null ? "" : JSON.stringify(body);
+            body = JSON.stringify(body);
             additionalHeaders["Content-Type"] = "application/json";
         }
         return await fetch(url, {
