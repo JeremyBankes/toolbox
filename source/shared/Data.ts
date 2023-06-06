@@ -46,14 +46,14 @@ export namespace Data {
      * @param path The path to check the existance of.
      * @returns True if {@link target} has {@link path}.
      */
-    export function has<Path extends string>(target: any, path: Path): target is ObjectWithPath<Path> {
+    export function has<Target, Path extends string>(target: Target, path: Path): target is Target & ObjectWithPath<Path> {
         const pieces = path.split(".");
         const key = pieces.shift();
         if (key === undefined) {
             return target !== undefined && target !== null;
         } else {
             if (typeof target === "object" && target !== null && key in target) {
-                return has(target[key], pieces.join("."));
+                return has(target[key as keyof Target], pieces.join("."));
             } else {
                 return false;
             }
@@ -119,15 +119,15 @@ export namespace Data {
      * @param value The value to be set.
      * @returns True if the target is updated, false otherwise.
      */
-    export function set<Path extends string, Value>(target: any, path: Path, value: Value): target is ObjectWithPath<Path, Value> {
+    export function set<Target, Path extends string, Value>(target: Target, path: Path, value: Value): target is Target & ObjectWithPath<Path, Value> {
         const pieces = path.split(".");
-        const key = pieces.shift();
+        const key = pieces.shift() as keyof Target;
         if (key !== undefined) {
             if (pieces.length === 0) {
-                target[key] = value;
+                target[key] = value as any;
             } else {
                 if (typeof target[key] !== "object" && target[key] !== null) {
-                    target[key] = pieces.length > 0 && !isNaN(parseInt(pieces[0].toString())) ? [] : {};
+                    target[key] = (pieces.length > 0 && !isNaN(parseInt(pieces[0].toString())) ? [] : {}) as any;
                 }
                 Data.set(target[key], pieces.join("."), value);
             }
