@@ -56,7 +56,7 @@ export namespace Error {
 
         public constructor(code: number, message?: string) {
             super(message);
-            this.name = this.constructor.name;
+            this.name = `${this.name} (HTTP Status Code ${code})`;
             this._code = code;
         }
 
