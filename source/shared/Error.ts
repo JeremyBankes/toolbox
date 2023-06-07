@@ -52,16 +52,12 @@ export namespace Error {
      */
     export class Http extends Named {
 
-        protected _code: number;
+        public readonly code: number;
 
         public constructor(code: number, message?: string) {
             super(message);
             this.name = `${this.name} (HTTP Status Code ${code})`;
-            this._code = code;
-        }
-
-        public get code() {
-            return this._code;
+            this.code = code;
         }
 
     }
@@ -82,8 +78,8 @@ export namespace Error {
      */
     export class User extends Http {
 
-        public constructor(message?: string) {
-            super(400, message);
+        public constructor(message?: string, code: number = 400) {
+            super(code, message);
         }
 
     }
@@ -94,8 +90,7 @@ export namespace Error {
     export class Authentication extends User {
 
         public constructor(message?: string) {
-            super(message);
-            this._code = 403;
+            super(message, 403);
         }
 
     }
@@ -107,8 +102,7 @@ export namespace Error {
     export class Authorization extends User {
 
         public constructor(message?: string) {
-            super(message);
-            this._code = 401;
+            super(message, 401);
         }
 
     }
@@ -119,8 +113,7 @@ export namespace Error {
     export class NotFound extends User {
 
         public constructor(message?: string) {
-            super(message);
-            this._code = 404;
+            super(message, 404);
         }
 
     }
@@ -131,8 +124,7 @@ export namespace Error {
     export class RateLimit extends User {
 
         public constructor(message?: string) {
-            super(message);
-            this._code = 429;
+            super(message, 429);
         }
 
     }
