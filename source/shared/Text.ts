@@ -27,7 +27,7 @@ export namespace Text {
      * @param string The text to turn into a slug
      * @returns a-slug-string
      */
-    export function toSlug(string: string) {
+    export function slug(string: string) {
         string = string.replace(/[^a-z0-9]+/gi, "-");
         string = string.replace(/([a-z])([A-Z])/g, "$1-$2");
         string = string.replace(/^-|-$/g, "");
@@ -39,7 +39,7 @@ export namespace Text {
      * @param string The text to turn into camel case.
      * @returns aCamelCaseString
      */
-    export function toCamel(string: string) {
+    export function camel(string: string) {
         string = string.replace(/[^A-Za-z0-9]+/g, " ").trim().toLowerCase();
         string = string.split(/ /g).map((piece, index) => {
             if (index > 0) {
@@ -55,7 +55,7 @@ export namespace Text {
      * @param string The text to turn into title case.
      * @returns A Title Case String
      */
-    export function toTitle(string: string) {
+    export function title(string: string) {
         return string.toLowerCase().replace(/(?:^|\s)[a-z]/g, (match) => match.toUpperCase());
     }
 
@@ -64,7 +64,7 @@ export namespace Text {
      * @param values A list of values to make a pretty list out of.
      * @returns A list deliminated by commas with the word "and" seperating the last element.
      */
-    export function toPrettyList(values: string[], lastDelimiter: string = " and ", delimiter: string = ", ") {
+    export function list(values: string[], lastDelimiter: string = " and ", delimiter: string = ", ") {
         if (values.length > 1) {
             const lastValue = values.pop();
             return values.join(delimiter) + lastDelimiter + lastValue;
@@ -79,7 +79,7 @@ export namespace Text {
      * @param count The number of {@link singular}. Not 1 to pluralize.
      * @returns The plural of {@link singular}.
      */
-    export function pluralize(singular: string, count: number = 0) {
+    export function plural(singular: string, count: number = 0) {
         if (count == 1) {
             return singular;
         }
@@ -115,7 +115,7 @@ export namespace Text {
      * @param value The number to add a suffix to.
      * @returns A string of "value" with a number suffix.
      */
-    export function withNumberSuffix(value: number): string {
+    export function integerSuffix(value: number): string {
         if (value % 1 !== 0) {
             throw new Error(`Can only determine a number suffix for integers. Got "${value}".`);
         }
@@ -131,10 +131,12 @@ export namespace Text {
     /**
      * Converts a date object into strings of various formats.
      * @param date The date to convert.
-     * @param format The format to use.
+     * @param format The format to use. ("iso", "form", "pretty")
      * @returns A formatted date string.
+     * 
+     * @note The "pretty" will use {@link Text.defaults.locale} and {@link Text.defaults.dateFormat}
      */
-    export function fromDate(date: Date, format: "iso" | "form" | "pretty" = "pretty") {
+    export function date(date: Date, format: "iso" | "form" | "pretty" = "pretty") {
         switch (format) {
             case "iso": return date.toISOString();
             case "form": return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().substring(0, 10);
@@ -144,27 +146,12 @@ export namespace Text {
     }
 
     /**
-    * Converts a string into a date object.
-    * @param dateString The string to parse into a date.
-    * @param formFormat If true, parses "dateString" in the current timezone instead of UTC.
-    * @returns The parsed date.
-    */
-    export function toDate(dateString: string, formFormat: boolean) {
-        const date = new Date(dateString);
-        if (formFormat) {
-            return new Date(date.getTime() + date.getTimezoneOffset() * 60000);
-        } else {
-            return date;
-        }
-    }
-
-    /**
      * Converts a date or hours number into time strings of various formats.
      * @param hoursOfDayOrDate A number of hours in a day (0-24) or a date object to convert to a time string.
      * @param format The format of the time string.
      * @returns The formatted time string.
      */
-    export function fromTime(hoursOfDayOrDate: Date | number, format: "form" | "pretty" = "pretty") {
+    export function time(hoursOfDayOrDate: Date | number, format: "form" | "pretty" = "pretty") {
         switch (format) {
             case "form":
                 let hours: number;
@@ -188,17 +175,6 @@ export namespace Text {
     }
 
     /**
-     * Converts a form time string to a number of hours of a day.
-     * @param formTimeString The string to parse.
-     * @returns An hour of the day (0-24) representing {@link formTimeString}.
-     */
-    export function toTime(formTimeString: string) {
-        const hours = parseInt(formTimeString.substring(0, 2));
-        const minutes = parseInt(formTimeString.substring(3, 5));
-        return hours + minutes / 60;
-    }
-
-    /**
      * Converts a given duration in milliseconds to a string.
      * @param milliseconds Milliseconds to convert into a duration string.
      * @param maximumPrecision The maximum precision of the duration string.
@@ -206,7 +182,7 @@ export namespace Text {
      * @param pluralize True to pluralize the units, false otherwise.
      * @returns A duration string.
      */
-    export function toDurationString(milliseconds: number, maximumPrecision: Precision = "day", minimumPrecision: Precision = "second", pluralize: boolean = false) {
+    export function duration(milliseconds: number, maximumPrecision: Precision = "day", minimumPrecision: Precision = "second", pluralize: boolean = false) {
         const precisions = [
             { name: "week", milliseconds: 1000 * 60 * 60 * 24 * 7 },
             { name: "day", milliseconds: 1000 * 60 * 60 * 24 },
@@ -223,7 +199,7 @@ export namespace Text {
             let count = i === last ? Math.round(milliseconds / item.milliseconds) : Math.floor(milliseconds / item.milliseconds);
             milliseconds -= count * item.milliseconds;
             if (count !== 0) {
-                pieces.push(count + " " + (pluralize ? Text.pluralize(item.name, count) : item.name));
+                pieces.push(count + " " + (pluralize ? Text.plural(item.name, count) : item.name));
             }
         }
         return pieces.join(", ");
@@ -234,7 +210,7 @@ export namespace Text {
      * @param date The date to get the weekday from.
      * @returns The name of the day of the week.
      */
-    export function getWeekdayName(date: Date) {
+    export function weekday(date: Date) {
         return date.toLocaleDateString(Text.defaults.locale, { weekday: "long" });
     }
 
@@ -243,7 +219,7 @@ export namespace Text {
      * @param date The date to get the month from.
      * @returns The name of the month of the year.
      */
-    export function getMonthName(date: Date) {
+    export function month(date: Date) {
         return date.toLocaleDateString(Text.defaults.locale, { month: "long" });
     }
 
@@ -252,7 +228,7 @@ export namespace Text {
      * @param currency The currency to convert to a string.
      * @returns A string representing {@link currency}.
      */
-    export function fromCurrency(currency: number) {
+    export function currency(currency: number) {
         return currency.toLocaleString(Text.defaults.locale, { style: "currency", currency: Text.defaults.currency });
     }
 
@@ -261,7 +237,7 @@ export namespace Text {
      * @param percentage The percentage to convert to a string.
      * @returns A string representing {@link percentage}.
      */
-    export function fromPercentage(percentage: number) {
+    export function percentage(percentage: number) {
         return percentage.toLocaleString(Text.defaults.locale, { style: "percent" });
     }
 
@@ -271,43 +247,77 @@ export namespace Text {
      * @param fractionalDigits The number of digits to represent the fractional portion of the number.
      * @returns A string representing {@link number}.
      */
-    export function fromNumber(number: number, fractionalDigits: number = 2) {
+    export function number(number: number, fractionalDigits: number = 2) {
         return number.toLocaleString(Text.defaults.locale, { style: "decimal", minimumFractionDigits: fractionalDigits, maximumFractionDigits: fractionalDigits });
     }
 
-    /**
-     * Calculates the [Levenshtein distance]{@link https://en.wikipedia.org/wiki/Levenshtein_distance} between two strings.
-     * @param stringA The first string
-     * @param stringB The second string
-     * @returns The distance between {@link stringA} and {@link stringB}
-     */
-    export function getLevenshteinDistance(stringA: string, stringB: string) {
-        const line = Array(stringB.length + 1).fill(null).map(() => Array(stringA.length + 1).fill(null));
-        for (let i = 0; i <= stringA.length; i += 1) {
-            line[0][i] = i;
+    export namespace Utility {
+
+        /**
+         * Calculates the [Levenshtein distance]{@link https://en.wikipedia.org/wiki/Levenshtein_distance} between two strings.
+         * @param stringA The first string
+         * @param stringB The second string
+         * @returns The distance between {@link stringA} and {@link stringB}
+         */
+        export function getLevenshteinDistance(stringA: string, stringB: string) {
+            const line = Array(stringB.length + 1).fill(null).map(() => Array(stringA.length + 1).fill(null));
+            for (let i = 0; i <= stringA.length; i += 1) {
+                line[0][i] = i;
+            }
+            for (let j = 0; j <= stringB.length; j += 1) {
+                line[j][0] = j;
+            }
+            for (let j = 1; j <= stringB.length; j += 1) {
+                for (let i = 1; i <= stringA.length; i += 1) {
+                    const indicator = stringA[i - 1] === stringB[j - 1] ? 0 : 1;
+                    line[j][i] = Math.min(line[j][i - 1] + 1, line[j - 1][i] + 1, line[j - 1][i - 1] + indicator);
+                }
+            }
+            return line[stringB.length][stringA.length];
         }
-        for (let j = 0; j <= stringB.length; j += 1) {
-            line[j][0] = j;
+
+        /**
+         * Calculates a normalized similarity factor between two strings. Determines how similar two strings are. Used for fuzzy string checking.
+         * @param stringA The first string
+         * @param stringB The second string
+         * @returns A similarity factor, 1 being identical, 0 being very different.
+         */
+        export function getSimilarity(stringA: string, stringB: string) {
+            const distance = Text.Utility.getLevenshteinDistance(stringA, stringB);
+            const averageLength = (stringA.length + stringB.length) / 2;
+            return Math.max(0, 1 - distance / Math.max(1, averageLength));
         }
-        for (let j = 1; j <= stringB.length; j += 1) {
-            for (let i = 1; i <= stringA.length; i += 1) {
-                const indicator = stringA[i - 1] === stringB[j - 1] ? 0 : 1;
-                line[j][i] = Math.min(line[j][i - 1] + 1, line[j - 1][i] + 1, line[j - 1][i - 1] + indicator);
+
+    }
+
+    export namespace Parse {
+
+        /**
+        * Converts a string into a date object.
+        * @param dateString The string to parse into a date.
+        * @param formFormat If true, parses "dateString" in the current timezone instead of UTC.
+        * @returns The parsed date.
+        */
+        export function date(dateString: string, formFormat: boolean) {
+            const date = new Date(dateString);
+            if (formFormat) {
+                return new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+            } else {
+                return date;
             }
         }
-        return line[stringB.length][stringA.length];
-    };
 
-    /**
-     * Calculates a normalized similarity factor between two strings. Determines how similar two strings are. Used for fuzzy string checking.
-     * @param stringA The first string
-     * @param stringB The second string
-     * @returns A similarity factor, 1 being identical, 0 being very different.
-     */
-    export function getSimilarityFactor(stringA: string, stringB: string) {
-        const distance = Text.getLevenshteinDistance(stringA, stringB);
-        const averageLength = (stringA.length + stringB.length) / 2;
-        return Math.max(0, 1 - distance / Math.max(1, averageLength));
+        /**
+         * Converts a form time string (HH:mm) to a number of hours of a day.
+         * @param formTimeString The string to parse.
+         * @returns An hour of the day (0-24) representing {@link formTimeString}.
+         */
+        export function time(formTimeString: string) {
+            const hours = parseInt(formTimeString.substring(0, 2));
+            const minutes = parseInt(formTimeString.substring(3, 5));
+            return hours + minutes / 60;
+        }
+
     }
 
 };

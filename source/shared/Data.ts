@@ -48,14 +48,14 @@ export namespace Data {
      * @param path The path to check the existance of.
      * @returns True if {@link target} has {@link path}.
      */
-    export function has<Target, Path extends string>(target: Target, path: Path): target is Target & ObjectWithPath<Path> {
+    export function has<Path extends string>(target: any, path: Path): target is ObjectWithPath<Path> {
         const pieces = path.split(".");
         const key = pieces.shift();
         if (key === undefined) {
             return target !== undefined && target !== null;
         } else {
             if (typeof target === "object" && target !== null && key in target) {
-                return has(target[key as keyof Target], pieces.join("."));
+                return has(target[key], pieces.join("."));
             } else {
                 return false;
             }
@@ -121,9 +121,9 @@ export namespace Data {
      * @param value The value to be set.
      * @returns True if the target is updated, false otherwise.
      */
-    export function set<Target, Path extends string, Value>(target: Target, path: Path, value: Value): target is Target & ObjectWithPath<Path, Value> {
+    export function set<Path extends string, Value>(target: any, path: Path, value: Value): target is ObjectWithPath<Path, Value> {
         const pieces = path.split(".");
-        const key = pieces.shift() as keyof Target;
+        const key = pieces.shift();
         if (key !== undefined) {
             if (pieces.length === 0) {
                 target[key] = value as any;
@@ -258,13 +258,4 @@ export namespace Data {
         }
     }
 
-}
-
-const a = {
-    person: {
-        name: {
-            first: "Jeremy",
-            last: "Bankes"
-        }
-    }
 }
