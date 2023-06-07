@@ -49,7 +49,7 @@ export namespace Data {
      * @returns True if {@link target} has {@link path}.
      */
     export function has<Path extends string>(target: any, path: Path): target is ObjectWithPath<Path> {
-        const pieces = path.split(".");
+        const pieces = path === "" ? [] : path.split(".");
         const key = pieces.shift();
         if (key === undefined) {
             return target !== undefined && target !== null;
@@ -78,7 +78,7 @@ export namespace Data {
      */
     export function get<Target, Path extends string, Fallback>(target: Target, path: Path, fallback: Fallback): Exclude<TypeAtPath<Target, Path>, undefined> | Fallback;
     export function get(target: any, path: string, fallback?: any) {
-        const pieces = path.split(".");
+        const pieces = path === "" ? [] : path.split(".");
         const key = pieces.shift();
         if (key === undefined) {
             if (target === undefined || target === null) {
@@ -122,7 +122,7 @@ export namespace Data {
      * @returns True if the target is updated, false otherwise.
      */
     export function set<Path extends string, Value>(target: any, path: Path, value: Value): target is ObjectWithPath<Path, Value> {
-        const pieces = path.split(".");
+        const pieces = path === "" ? [] : path.split(".");
         const key = pieces.shift();
         if (key !== undefined) {
             if (pieces.length === 0) {
@@ -145,7 +145,7 @@ export namespace Data {
      */
     export function remove<Target extends ObjectWithPath<Path, any>, Path extends string>
         (target: Target, path: Path): TypeAtPath<Target, Path> {
-        const pieces = path.split(".");
+        const pieces = path === "" ? [] : path.split(".");
         const key = pieces.shift();
         if (key !== undefined) {
             if (pieces.length === 0) {
