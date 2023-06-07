@@ -6,15 +6,7 @@ type ObjectWithPath<Path extends string, Type = any> = (
     Path extends `${infer Head}.${infer Tail}` ? (
         { [Key in Head]: ObjectWithPath<Tail, Type> }
     ) : (
-        { [Key in Path]: Type }
-    )
-);
-
-type AssertedObjectWithPath<Target, Path extends string> = (
-    Path extends `${infer Head}.${infer Tail}` ? Target & (
-        { [Key in Head]: Head extends keyof Target ? AssertedObjectWithPath<Target[Head], Tail> : never }
-    ) : (
-        { [Key in Path]: Key extends keyof Target ? Present<Target[Key]> : never }
+        { [Key in Path]: Present<Type> }
     )
 );
 
@@ -50,14 +42,14 @@ export namespace Data {
      * @param path The path to check the existance of.
      * @returns True if {@link target} has {@link path}.
      */
-    export function has<Target, Path extends string>(target: Target, path: Path): target is Target & AssertedObjectWithPath<Target, Path> {
+    export function has<Path extends string>(target: any, path: Path): target is ObjectWithPath<Path> {
         const pieces = path === "" ? [] : path.split(".");
         const key = pieces.shift();
         if (key === undefined) {
             return target !== undefined && target !== null;
         } else {
             if (typeof target === "object" && target !== null && key in target) {
-                return has(target[key as keyof Target], pieces.join("."));
+                return has(target[key], pieces.join("."));
             } else {
                 return false;
             }
