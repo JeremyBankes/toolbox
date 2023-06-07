@@ -1,5 +1,7 @@
 import { Error } from "./Error";
 
+type Present<Value> = Exclude<Exclude<Value, undefined>, null>;
+
 type ObjectWithPath<Path extends string, Type = any> = (
     Path extends `${infer Head}.${infer Tail}` ? (
         { [Key in Head]: ObjectWithPath<Tail, Type> }
@@ -8,11 +10,11 @@ type ObjectWithPath<Path extends string, Type = any> = (
     )
 );
 
-type ObjectWithOptionalPath<Path extends string, Type = any> = (
-    Path extends `${infer Head}.${infer Tail}` ? (
-        { [Key in Head]?: ObjectWithOptionalPath<Tail, Type> }
+type AssertedObjectWithPath<Target, Path extends string> = (
+    Path extends `${infer Head}.${infer Tail}` ? Target & (
+        { [Key in Head]: Head extends keyof Target ? AssertedObjectWithPath<Target[Head], Tail> : never }
     ) : (
-        { [Key in Path]?: Type }
+        { [Key in Path]: Key extends keyof Target ? Present<Target[Key]> : never }
     )
 );
 
@@ -48,14 +50,14 @@ export namespace Data {
      * @param path The path to check the existance of.
      * @returns True if {@link target} has {@link path}.
      */
-    export function has<Path extends string>(target: any, path: Path): target is ObjectWithPath<Path> {
+    export function has<Target, Path extends string>(target: Target, path: Path): target is Target & AssertedObjectWithPath<Target, Path> {
         const pieces = path === "" ? [] : path.split(".");
         const key = pieces.shift();
         if (key === undefined) {
             return target !== undefined && target !== null;
         } else {
             if (typeof target === "object" && target !== null && key in target) {
-                return has(target[key], pieces.join("."));
+                return has(target[key as keyof Target], pieces.join("."));
             } else {
                 return false;
             }
@@ -70,13 +72,13 @@ export namespace Data {
      */
     export function get<Target, Path extends string>(target: Target, path: Path): TypeAtPath<Target, Path> | undefined;
     /**
-     * Retrieves a value at {@link pieces} in {@link target} object.
+     * Retrieves a value at {@link path} in {@link target} object.
      * @param target The target object.
-     * @param pieces The path to retrieve a value from.
-     * @param fallback A value to fallback on if {@link pieces} couldn't be found.
-     * @returns The value in {@link target} at {@link pieces}, or {@link fallback} if {@link pieces} can't be found.
+     * @param path The path to retrieve a value from.
+     * @param fallback A value to fallback on if {@link path} couldn't be found.
+     * @returns The value in {@link target} at {@link path}, or {@link fallback} if {@link path} doesn't exist or has a value of null or undefined.
      */
-    export function get<Target, Path extends string, Fallback>(target: Target, path: Path, fallback: Fallback): Exclude<TypeAtPath<Target, Path>, undefined> | Fallback;
+    export function get<Target, Path extends string, Fallback>(target: Target, path: Path, fallback: Fallback): Present<TypeAtPath<Target, Path>> | Fallback;
     export function get(target: any, path: string, fallback?: any) {
         const pieces = path === "" ? [] : path.split(".");
         const key = pieces.shift();
@@ -106,10 +108,10 @@ export namespace Data {
      * @param validator A predicate to validate the value found at {@link path}.
      * @returns The value found at {@link path} in {@link target}.
      */
-    export function getOrThrow<Target, Path extends string>(target: Target, path: Path): TypeAtPath<Target, Path> {
+    export function getOrThrow<Target, Path extends string>(target: Target, path: Path): Present<TypeAtPath<Target, Path>> {
         const value = Data.get(target, path, undefined);
         if (value === undefined) {
-            throw new Error.Original(`Failed to find valid ${path} value in ${JSON.stringify(target)}. "${value}" value failed validation predicate.`);
+            throw new Error.Original(`Failed to get value at "${path}" in target.`, { cause: { target, path } });
         }
         return value;
     }
@@ -143,8 +145,7 @@ export namespace Data {
      * @param pieces The path of the value to remove from {@link target}.
      * @returns The removed value.
      */
-    export function remove<Target extends ObjectWithPath<Path, any>, Path extends string>
-        (target: Target, path: Path): TypeAtPath<Target, Path> {
+    export function remove<Target extends ObjectWithPath<Path, any>, Path extends string>(target: Target, path: Path): TypeAtPath<Target, Path> {
         const pieces = path === "" ? [] : path.split(".");
         const key = pieces.shift();
         if (key !== undefined) {
@@ -156,7 +157,7 @@ export namespace Data {
                 return Data.remove(target[key], pieces.join("."));
             }
         }
-        throw new Error.Original(`Failed to remove "${path}" from ${JSON.stringify(target)}.`);
+        throw new Error.Original(`Failed to remove value at "${path}" in target.`, { cause: { target, path } });
     }
 
     /**

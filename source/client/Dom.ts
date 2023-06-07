@@ -62,13 +62,17 @@ export namespace Dom {
      */
     export function create(options: HTMLElementCreationOptions) {
         const element = document.createElement(options.tagName);
-        element.classList.add(...Data.get(options, "classList", []));
-        element.textContent = Data.get(options, "textContent", "");
+        if (Data.has(options, "textContent")) {
+            element.textContent = options.textContent;
+        }
+        if (Data.has(options, "classList")) {
+            element.classList.add(...options.classList);
+        }
         if (Data.has(options, "innerHTML")) {
-            element.innerHTML = Data.get(options, "innerHTML", null);
+            element.innerHTML = options.innerHTML;
         }
         if (Data.has(options, "outerHTML")) {
-            element.outerHTML = Data.get(options, "outerHTML", null);
+            element.outerHTML = options.outerHTML;
         }
         if (Data.has(options, "attributes")) {
             for (const name in options.attributes) {
@@ -81,7 +85,7 @@ export namespace Dom {
             }
         }
         if (Data.has(options, "childNodes")) {
-            element.append(...Data.get(options, "childNodes", []));
+            element.append(...options.childNodes);
         }
         return element;
     }
