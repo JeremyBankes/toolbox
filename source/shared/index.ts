@@ -1,3 +1,4 @@
+export * from "./ConsoleColor";
 export * from "./Data";
-export * from "./Text";
 export * from "./Error";
+export * from "./Text";
