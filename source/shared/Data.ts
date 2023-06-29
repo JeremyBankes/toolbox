@@ -25,7 +25,7 @@ interface WalkObjectCallback {
      * @param property The value of a property within {@link target}.
      * @param path A string representing the path to {@link property} in the object being walked.
      * @param level The depth of {@link property} within the object being walked.
-     * @returns True representing being finished with {@link property}, and to stop traversing its keys. False to continute.
+     * @returns True representing being finished with {@link property}, and to stop traversing its keys. False to continue.
      */
     (target: any, property: any, path: string, level: number): boolean;
 
@@ -39,7 +39,7 @@ export namespace Data {
     /**
      * Checks to see if a given {@link target} object has a given {@link path}.
      * @param target The target object.
-     * @param path The path to check the existance of.
+     * @param path The path to check the existence of.
      * @returns True if {@link target} has {@link path}.
      */
     export function has<Path extends string>(target: any, path: Path): target is ObjectWithPath<Path> {
@@ -196,12 +196,12 @@ export namespace Data {
      * I.E. { name: { first: "Jeremy", last: "Bankes" } } -> { "name.first": "Jeremy", "name.last": "Bankes" }
      * 
      * @param target The target object
-     * @returns A flattend version of {@link target} without any nesting.
+     * @returns A flattened version of {@link target} without any nesting.
      */
     export function flatten(target: any) {
         const flattenedTarget: any = {};
         Data.walk(target, (_, property, path) => {
-            if (typeof property !== "object" || property instanceof Date) {
+            if (!isPlain(property)) {
                 flattenedTarget[path] = property;
                 return true;
             }
@@ -221,6 +221,14 @@ export namespace Data {
             Data.set(object, key, target[key]);
         }
         return object;
+    }
+
+    /**
+     * Tests to see if a given object is POD (Plain old data).
+     * @param object The object to test.
+     */
+    export function isPlain(object: any) {
+        return typeof object === "object" && object !== null && object.constructor.name === "Object";
     }
 
     /**
