@@ -145,7 +145,7 @@ export namespace Data {
                 return Data.remove(target[key], pieces.join("."));
             }
         }
-        throw new Error.Original(`Failed to remove value at "${path}" in target.`, { cause: { target, path } });
+        return undefined as any;
     }
 
     /**

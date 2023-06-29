@@ -161,11 +161,4 @@ export namespace Error {
     export class RequestHeaderFieldsTooLarge extends User { public constructor(message?: string) { super(message, 431); } }
     export class UnavailableForLegalReasons extends User { public constructor(message?: string) { super(message, 451); } }
 
-    /** @deprecated Please use {@link Forbidden}. This error has been deprecated in favor of the errors better matching the HTTP status codes. */
-    export class Authorization extends User { public constructor(message?: string) { super(message, 403); } }
-
-    /** @deprecated Please use {@link TooManyRequests}. This error has been deprecated in favor of the errors better matching the HTTP status codes. */
-    export class RateLimit extends User { public constructor(message?: string) { super(message, 429); } }
-
-
 }
