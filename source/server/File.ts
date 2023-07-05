@@ -1,6 +1,15 @@
 import FileSystem from "fs";
 import Path from "path";
 
+export interface FileMeta {
+    path: string;
+    size: number;
+    directory: boolean;
+    creation: Date;
+    lastModified: Date;
+    lastAccess: Date;
+}
+
 export namespace File {
 
     /**
@@ -135,21 +144,43 @@ export namespace File {
      * Gets a list of file paths for all files nested within a directory specified by "path".
      * @param path The path of the directory to get all the nested files of.
      * @returns An array of paths of all nested files within the directory specified by "path".
-     * @note The paths returned by this function are absoltue.
+     * @note The paths returned by this function are relative to "path".
      */
     export async function getNested(path: string): Promise<string[]> {
         const files = [];
         const fileNames = await listDirectory(path);
         for (const fileName of fileNames) {
             const filePath = Path.join(path, fileName);
-            const fileInformation = FileSystem.statSync(filePath);
-            if (fileInformation.isFile()) {
-                files.push(Path.resolve(filePath));
-            } else if (fileInformation.isDirectory()) {
+            const meta = await getMeta(filePath);
+            if (meta.directory) {
                 files.push(...await getNested(filePath));
+            } else {
+                files.push(filePath);
             }
         }
         return files;
+    }
+
+    /**
+     * Gets the meta information for a given file/directory.
+     */
+    export async function getMeta(path: string): Promise<FileMeta> {
+        return new Promise<FileMeta>((resolve, reject) => {
+            FileSystem.stat(path, (error, statistics) => {
+                if (error === null) {
+                    resolve({
+                        directory: statistics.isDirectory(),
+                        path: Path.resolve(path),
+                        size: statistics.size,
+                        creation: statistics.birthtime,
+                        lastModified: statistics.mtime,
+                        lastAccess: statistics.atime
+                    });
+                } else {
+                    reject(error);
+                }
+            });
+        });
     }
 
     /**
