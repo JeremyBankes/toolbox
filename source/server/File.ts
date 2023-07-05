@@ -125,7 +125,7 @@ export namespace File {
 
     /**
      * Checks to see if a file or directory exists at "path".
-     * @param path The path to the file or directory to check the existance of.
+     * @param path The path to the file or directory to check the existence of.
      * @returns True if a file or directory exists at "path", false otherwise.
      */
     export async function exists(path: string) {
