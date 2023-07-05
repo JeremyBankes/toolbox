@@ -147,15 +147,20 @@ export namespace File {
      * @note The paths returned by this function are relative to "path".
      */
     export async function getNested(path: string): Promise<string[]> {
+        return await _getNested(path);
+    }
+
+    async function _getNested(path: string, base: string = "."): Promise<string[]> {
         const files = [];
         const fileNames = await listDirectory(path);
         for (const fileName of fileNames) {
             const filePath = Path.join(path, fileName);
+            const relativeFilePath = Path.join(base, fileName);
             const meta = await getMeta(filePath);
             if (meta.directory) {
-                files.push(...await getNested(filePath));
+                files.push(...await _getNested(filePath, relativeFilePath));
             } else {
-                files.push(filePath);
+                files.push(relativeFilePath);
             }
         }
         return files;
