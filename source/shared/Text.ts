@@ -23,7 +23,7 @@ export namespace Text {
     }
 
     /**
-     * Converts {@link string} to a url-slug. Note that this function treats camel casing as seperate words. Convert {@link string} to lower case first to avoid this functionality.
+     * Converts {@link string} to a url-slug. Note that this function treats camel casing as separate words. Convert {@link string} to lower case first to avoid this functionality.
      * @param string The text to turn into a slug
      * @returns a-slug-string
      */
@@ -60,9 +60,25 @@ export namespace Text {
     }
 
     /**
+     * Wraps 'string' in quotes.
+     * @param string A string to wrap in quotes.
+     * @returns A string wrapped in quotes.
+     */
+    export function quote(string: string, quote: string = "\"") {
+        return quote + string + quote;
+    }
+
+    export function unquote(string: string, quote: string = "\"") {
+        if (string.startsWith(quote) && string.endsWith(quote)) {
+            return string.substring(quote.length, string.length - quote.length);
+        }
+        return string;
+    }
+
+    /**
      * Creates an English readable list from {@link values}.
      * @param values A list of values to make a pretty list out of.
-     * @returns A list deliminated by commas with the word "and" seperating the last element.
+     * @returns A list deliminated by commas with the word "and" separating the last element.
      */
     export function list(values: string[], lastDelimiter: string = " and ", delimiter: string = ", ") {
         if (values.length > 1) {
