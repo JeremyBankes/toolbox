@@ -62,12 +62,19 @@ export namespace Text {
     /**
      * Wraps 'string' in quotes.
      * @param string A string to wrap in quotes.
+     * @param quote The quote string.
      * @returns A string wrapped in quotes.
      */
     export function quote(string: string, quote: string = "\"") {
         return quote + string + quote;
     }
 
+    /**
+     * Removes the quotes from a given string.
+     * @param string A string to remove the quotes from.
+     * @param quote The quote string.
+     * @returns `string` without quotes.
+     */
     export function unquote(string: string, quote: string = "\"") {
         if (string.startsWith(quote) && string.endsWith(quote)) {
             return string.substring(quote.length, string.length - quote.length);
