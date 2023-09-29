@@ -1,6 +1,9 @@
 # A JavaScript/TypeScript Toolbox
 A utility library delivering many quality of life improvements to both browser and node environments.
 
+|⚠️| This project has been deprecated in favour of [Lucania/Toolbox](https://github.com/lucania-software/toolbox) |
+|-|-|
+
 This project has 3 sections.
 
 * __Shared__ - _@jeremy-bankes/toolbox/shared_ - Contains general features purely for manipulating data and works irrespective of environment, I.E. runs in both the client and server.
